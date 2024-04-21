@@ -28,3 +28,23 @@ export const getTestUser = async () => {
     }
   });
 }
+
+export const createTestParkings = async () => {
+  const createdParking = await prismaClient.parking.create({
+    data: {
+      code: "test",
+      status: "start",
+      parkingin: new Date(),
+    },
+  });
+
+  return createdParking.id;
+};
+
+export const removeAllTestParkings = async () => {
+  await prismaClient.parking.deleteMany({
+    where: {
+      code: "test",
+    },
+  });
+};
