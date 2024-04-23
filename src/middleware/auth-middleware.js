@@ -1,30 +1,21 @@
+import jwt from "jsonwebtoken";
 import { prismaClient } from "../application/database.js";
 
 export const authMiddleware = async (req, res, next) => {
-  const token = req.get("Authorization");
-  if (!token) {
-    res
-      .status(401)
-      .json({
-        errors: "Unauthorized",
-      })
-      .end();
-  } else {
-    const user = await prismaClient.user.findFirst({
-      where: {
-        token: token,
-      },
-    });
-    if (!user) {
-      res
-        .status(401)
-        .json({
-          errors: "Unauthorized",
-        })
-        .end();
-    } else {
-      req.user = user;
+  try {
+    let token = req.query.apiKey;
+
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    if (decoded.role === "ADMIN") {
+      req.user = decoded;
       next();
+    } else {
+      res.status(401).json({ error: "Invalid role" });
     }
+  } catch (err) {
+    res.status(401).json({
+      errors: "Unauthorized",
+      message: err.message,
+    });
   }
-}; 
+};

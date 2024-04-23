@@ -14,21 +14,36 @@ datasource db {
 }
 
 model User {
-  username  String  @id @db.VarChar(100)
-  password  String  @db.VarChar(100)
-  name      String  @db.VarChar(100)
-  token     String? @db.VarChar(100)
+  userId        String      @id @default(uuid())
+  username      String      @unique @db.VarChar(255)
+  password      String      @db.VarChar(255)
+  role          String      @default("ADMIN")
+  token         String?     @db.VarChar(255)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   @@map("users")
 }
 
 model Parking {
-  id          Int       @id @default(autoincrement())
+  parkingId   String    @id @default(uuid())
   code        String    @db.VarChar(10)
   status      String    @db.VarChar(10)
   parkingin   DateTime  @default(now())
   parkingout  DateTime?
   totaltime   Int?
+  transactions Transaksi[]
 
   @@map("parkings")
 }
+
+model Transaksi {
+  transaksiId   String    @id @default(uuid())
+  parkingId     String    @unique
+  idParking     Parking   @relation(fields: [parkingId], references: [parkingId])
+  totalprice    Float
+  TransactionStatus String @db.VarChar(255)
+  
+  @@map("transaksis")
+}
+

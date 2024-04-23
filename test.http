@@ -1,0 +1,22 @@
+###
+
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username" : "test",
+  "password" : "rahasia"
+}
+
+###
+GET http://localhost:3000/api/parkings
+Content-Type: application/json
+Accept: application/json
+Authorization: e4483207-4cfb-415e-9577-edb6d6eee9d4
+
+###
+DELETE http://localhost:3000/api/parkings/12
+Content-Type: application/json
+Accept: application/json
+Authorization: e4483207-4cfb-415e-9577-edb6d6eee9d4

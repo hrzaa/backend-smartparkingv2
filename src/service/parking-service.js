@@ -2,7 +2,8 @@ import { prismaClient } from "../application/database.js";
 import { validate } from "../validation/validation.js";
 import { 
     createParkingValidation, 
-    updateParkingValidation
+    updateParkingValidation,
+    getParkingValidation
  } from "../validation/parking-validation.js";
 
 const parkingIn = async (request) => {
@@ -70,8 +71,41 @@ const parkingOut = async (request) => {
     });
 };
 
+const getAllParking = async (request) => {
+  const parkings = await prismaClient.parking.findMany();
+
+  if (!parkings) {
+    throw new ResponseError(404, "Parking Code not found");
+  }
+
+  return parkings;
+}
+
+
+const removeParking = async (id) => {
+  id = validate(getParkingValidation, id);
+
+  const totalInDatabase = await prismaClient.parking.count({
+    where: {
+      id: id,
+    },
+  });
+
+  if (totalInDatabase !== 1) {
+    throw new ResponseError(404, "parking is not found");
+  }
+
+  return prismaClient.parking.delete({
+    where: {
+      id: id,
+    }
+  });
+};
+
 
 export default {
   parkingIn,
-  parkingOut
+  parkingOut,
+  getAllParking,
+  removeParking
 };

@@ -24,7 +24,32 @@ const parkingOut = async (req, res, next) => {
   }
 };
 
+const getAllParking = async(req, res, next) => {
+  try {
+    const result = await parkingService.getAllParking();
+    res.status(200).json({
+      data: result
+    })
+  } catch (e) {
+    next(e)
+  }
+}
+
+const removeParking = async (req, res, next) => {
+  try {
+    await parkingService.removeParking(req.params);
+    res.status(200).json({
+      data: "OK",
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   parkingIn,
-  parkingOut
+  parkingOut,
+  getAllParking,
+  removeParking
+
 };

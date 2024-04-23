@@ -5,8 +5,8 @@ import parkingController from "../controller/parking-controller.js";
 const publicRouter = new express.Router();
 
 // LOGIN RESGISTER API
-publicRouter.post("/api/users", userController.register);
-publicRouter.post("/api/users/login", userController.login);
+// publicRouter.post("/api/users", userController.register);
+publicRouter.post("/api/user/login", userController.login);
 
 // PARKING IN API
 publicRouter.post("/api/parkings/in", parkingController.parkingIn);

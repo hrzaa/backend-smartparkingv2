@@ -1,33 +1,43 @@
 import { prismaClient } from "../src/application/database.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+
+export const createTestUser = async () => {
+  const token = jwt.sign(
+    { 
+      userId: "testId", 
+      role: "ADMIN" 
+    },
+    process.env.SECRET_KEY
+  );
+
+  return await prismaClient.user.create({
+    data: {
+      userId: "testId",
+      username: "testUser",
+      password: await bcrypt.hash("testPass", 10),
+      role: "ADMIN",
+      token: token,
+    },
+  });
+};
 
 export const removeTestUser = async () => {
   await prismaClient.user.deleteMany({
     where: {
-      username: "test"
-    }
-  })
-}
-
-
-export const createTestUser = async () => {
-  await prismaClient.user.create({
-    data: {
-      username: "test",
-      password: await bcrypt.hash("rahasia", 10),
-      name: "test",
-      token: "test",
-    }
-  })
+      userId: "testId",
+    },
+  });
 };
 
 export const getTestUser = async () => {
-  return prismaClient.user.findUnique({
+  return await prismaClient.user.findUnique({
     where: {
-      username: "test"
-    }
+      userId: "testId",
+    },
   });
-}
+};
 
 export const createTestParkings = async () => {
   const createdParking = await prismaClient.parking.create({
@@ -48,3 +58,14 @@ export const removeAllTestParkings = async () => {
     },
   });
 };
+
+export const getTestParkings = async () => {
+  const parking = await prismaClient.parking.findFirst({
+    where: {
+      code: "test",
+    },
+  });
+
+  return parking;
+};
+
