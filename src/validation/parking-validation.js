@@ -5,6 +5,7 @@ const createParkingValidation = Joi.object({
   parkingin: Joi.date().iso().optional(),
   parkingout: Joi.date().iso().optional(),
   totaltime: Joi.number().optional(),
+  // status: Joi.string().max(10).required(),
 });
 
 const updateParkingValidation = Joi.object({

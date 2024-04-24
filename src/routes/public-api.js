@@ -12,6 +12,8 @@ publicRouter.post("/api/user/login", userController.login);
 publicRouter.post("/api/parkings/in", parkingController.parkingIn);
 publicRouter.post("/api/parkings/out", parkingController.parkingOut);
 
+publicRouter.get("/api/parkings", parkingController.getAllParking);
+
 export {
     publicRouter
 }

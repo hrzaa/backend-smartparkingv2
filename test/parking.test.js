@@ -5,7 +5,6 @@ import { removeAllTestParkings, createTestParkings, getTestParkings, createTestU
 
 describe("POST /api/parkings/in", function () {
 
-
     afterEach(async () => {
         await removeAllTestParkings();
     });
@@ -62,21 +61,21 @@ describe("POST /api/parkings/out", function () {
 
 describe("GET /api/parkings", function (){
   beforeEach(async () => {
-    await createTestUser();
+    // await createTestUser();
     await createTestParkings();
   });
 
   afterEach(async () => {
     await removeAllTestParkings();
-    await removeTestUser();
+    // await removeTestUser();
   });
 
   it("should can get parkings", async() => {
     const result = await supertest(web)
       .get("/api/parkings")
-      .set("Authorization", "test");
 
     expect(result.status).toBe(200);
+    expect(result.body.data).toBeDefined();
 
   })
 });

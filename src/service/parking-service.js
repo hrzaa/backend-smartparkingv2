@@ -19,7 +19,7 @@ const parkingIn = async (request) => {
         // status : status,
     },
     select: {
-      id: true,
+      parkingId: true,
       code: true,
       parkingin: true,
       parkingout: true,
@@ -52,7 +52,7 @@ const parkingOut = async (request) => {
 
     return prismaClient.parking.update({
       where: {
-        id: countParking.id,
+        parkingId: countParking.parkingId,
       },
       data: {
         code: parking.code,
@@ -61,7 +61,7 @@ const parkingOut = async (request) => {
         status: "end",
       },
       select: {
-        id: true,
+        parkingId: true,
         code: true,
         parkingin: true,
         parkingout: true,
