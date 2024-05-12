@@ -10,7 +10,7 @@ Accept: application/json
 }
 
 ###
-GET http://localhost:3000/api/parkings
+GET http://localhost:5000/api/parkings
 Content-Type: application/json
 Accept: application/json
 Authorization: e4483207-4cfb-415e-9577-edb6d6eee9d4
@@ -20,3 +20,9 @@ DELETE http://localhost:3000/api/parkings/12
 Content-Type: application/json
 Accept: application/json
 Authorization: e4483207-4cfb-415e-9577-edb6d6eee9d4
+
+###
+GET http://localhost:5000/api/parkings
+
+###
+GET http://localhost:5000/api/parkings/counts

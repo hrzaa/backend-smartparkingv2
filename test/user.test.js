@@ -10,58 +10,51 @@ import bcrypt from "bcrypt";
 //         await removeTestUser();
 //     })
 
+//     // it("should can register new user", async () => {
+//     //   const result = await supertest(web).post("/api/users").send({
+//     //     username: "test",
+//     //     password: "rahasia",
+//     //   });
 
-//     it("should can register new user", async () => {
-//       const result = await supertest(web).post("/api/users").send({
-//         username: "test",
-//         password: "rahasia",
-//         name: "test",
-//       });
+//     //   expect(result.status).toBe(200);
+//     //   expect(result.body.data.username).toBe("test");
+//     //   expect(result.body.data.password).toBeUndefined();
+//     // });
 
-//       expect(result.status).toBe(200);
-//       expect(result.body.data.username).toBe("test");
-//       expect(result.body.data.name).toBe("test");
-//       expect(result.body.data.password).toBeUndefined();
-//     });
+//     // it("should reject if request is invalid", async () => {
+//     //   const result = await supertest(web).post("/api/users").send({
+//     //     username: "",
+//     //     password: "",
+//     //   });
 
-//     it("should reject if request is invalid", async () => {
-//       const result = await supertest(web).post("/api/users").send({
-//         username: "",
-//         password: "",
-//         name: "",
-//       });
+//     //   logger.info(result.body);
 
-//       logger.info(result.body);
+//     //   expect(result.status).toBe(400);
+//     //   expect(result.body.errors).toBeDefined();
+//     // });
 
-//       expect(result.status).toBe(400);
-//       expect(result.body.errors).toBeDefined();
-//     });
+//     //  it("should reject if username already registered", async () => {
+//     //    let result = await supertest(web).post("/api/users").send({
+//     //      username: "test",
+//     //      password: "rahasia",
+//     //    });
 
-//      it("should reject if username already registered", async () => {
-//        let result = await supertest(web).post("/api/users").send({
-//          username: "test",
-//          password: "rahasia",
-//          name: "test",
-//        });
+//     //     logger.info(result.body);
 
-//         logger.info(result.body);
+//     //    expect(result.status).toBe(200);
+//     //    expect(result.body.data.username).toBe("test");
+//     //    expect(result.body.data.password).toBeUndefined();
 
-//        expect(result.status).toBe(200);
-//        expect(result.body.data.username).toBe("test");
-//        expect(result.body.data.name).toBe("test");
-//        expect(result.body.data.password).toBeUndefined();
+//     //    result = await supertest(web).post("/api/users").send({
+//     //      username: "test",
+//     //      password: "rahasia",
+//     //    });
 
-//        result = await supertest(web).post("/api/users").send({
-//          username: "test",
-//          password: "rahasia",
-//          name: "test",
-//        });
+//     //     logger.info(result.body);
 
-//         logger.info(result.body);
-
-//        expect(result.status).toBe(400);
-//        expect(result.body.errors).toBeDefined();
-//      });
+//     //    expect(result.status).toBe(400);
+//     //    expect(result.body.errors).toBeDefined();
+//     //  });
 
 // });
 

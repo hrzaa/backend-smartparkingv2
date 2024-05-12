@@ -31,7 +31,7 @@ const getAllParking = async(req, res, next) => {
   } catch (e) {
     next(e)
   }
-}
+};
 
 const removeParking = async (req, res, next) => {
   try {

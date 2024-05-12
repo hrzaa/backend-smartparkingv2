@@ -46,9 +46,7 @@ const parkingOut = async (request) => {
     }
 
     const timeIn = new Date(countParking.parkingin);
-    const totalTimeInMinutes = Math.floor(
-        (dateUpdate - timeIn) / (1000 * 60)
-    );
+    const totalTimeInHours = (dateUpdate - timeIn) / (1000 * 60 * 60);
 
     return prismaClient.parking.update({
       where: {
@@ -57,7 +55,7 @@ const parkingOut = async (request) => {
       data: {
         code: parking.code,
         parkingout: dateUpdate,
-        totaltime: totalTimeInMinutes,
+        totaltime: totalTimeInHours,
         status: "end",
       },
       select: {

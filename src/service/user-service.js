@@ -13,6 +13,41 @@ import { request } from "express";
 import jwt from "jsonwebtoken";
 
 
+
+const register = async (request) => {
+  const user = validate(registerUserValidation, request);
+
+  const countUser = await prismaClient.user.count({
+    where: {
+      username: user.username,
+    },
+  });
+
+  if (countUser === 1) {
+    throw new ResponseError(400, "Username already exists");
+  }
+
+  user.password = await bcrypt.hash(user.password, 10);
+
+  // Create token with jwt
+  const token = jwt.sign(
+    { userId: user.userId, role: "ADMIN" },
+    process.env.SECRET_KEY,
+    { expiresIn: "1d" } // Token expires in 1 day
+  );
+
+  user.token = token; // Add token to user object
+
+  return prismaClient.user.create({
+    data: user,
+    select: {
+      username: true,
+      token: true,
+    },
+  });
+};
+
+
 const login = async (request) => {
   const loginRequest = validate(loginUserValidation, request);
 
@@ -162,7 +197,7 @@ const logout = async (req) => {
 };
 
 export default{
-    // register, 
+    register, 
     login,
     get, 
     update, 
