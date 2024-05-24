@@ -9,14 +9,26 @@ import {
 const parkingIn = async (request) => {
   const parking = validate(createParkingValidation, request);
 
+  const existingParking = await prismaClient.parking.findFirst({
+    where: {
+      code: parking.code,
+      status: "start",
+    },
+  });
+
+  if (existingParking) {
+    throw new Error(
+      `Parking with code ${parking.code} is already in progress.`
+    );
+  }
+
   return prismaClient.parking.create({
     data: {
-        code : parking.code,
-        parkingin : parking.parkingin,
-        parkingout : parking.parkingout,
-        totaltime : parking.totaltime,
-        status : "start",
-        // status : status,
+      code: parking.code,
+      parkingin: parking.parkingin,
+      parkingout: parking.parkingout,
+      totaltime: parking.totaltime,
+      status: "start",
     },
     select: {
       parkingId: true,
@@ -70,7 +82,11 @@ const parkingOut = async (request) => {
 };
 
 const getAllParking = async (request) => {
-  const parkings = await prismaClient.parking.findMany();
+  const parkings = await prismaClient.parking.findMany({
+    orderBy :{
+      parkingin: "asc"
+    },
+  });
 
   if (!parkings) {
     throw new ResponseError(404, "Parking Code not found");

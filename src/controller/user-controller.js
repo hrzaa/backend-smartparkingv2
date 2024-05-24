@@ -33,6 +33,17 @@ const get = async (req, res, next) => {
   }
 };
 
+const all = async (req, res, next) => {
+  try {
+    const result = await userService.all();
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const update = async (req, res, next) => {
  try {
    const data = req.body;
@@ -57,12 +68,11 @@ const logout = async (req, res, next) => {
   }
 };
 
-
-
 export default{
     register,
     login, 
     get, 
+    all,
     update,
     logout
 }

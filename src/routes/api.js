@@ -8,6 +8,7 @@ const apiRouter = new express.Router();
 
     // USER ROUTER
     apiRouter.get("/api/user/get/:userId", userController.get);
+    apiRouter.get("/api/users/", userController.all);
     apiRouter.patch("/api/user/update/:userId", userController.update);
     apiRouter.delete("/api/user/logout/:userId", userController.logout);
     

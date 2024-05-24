@@ -122,6 +122,18 @@ const get = async (req) => {
   return user;
 };
 
+const all = async (req) => {
+  const userRequest = validate(getUserValidation, req);
+
+  const user = await prismaClient.user.findMany();
+
+  if (!user) {
+    throw new ResponseError(404, "User not found");
+  }
+
+  return user;
+};
+
 const update = async (id, data) => {
   const idReq = validate(getUserValidation, id);
   const dataReq = validate(updateUserValidation, data);
@@ -200,6 +212,7 @@ export default{
     register, 
     login,
     get, 
+    all,
     update, 
     logout
 }
