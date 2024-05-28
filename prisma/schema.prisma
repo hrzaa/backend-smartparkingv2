@@ -32,17 +32,17 @@ model Parking {
   parkingin   DateTime  @default(now())
   parkingout  DateTime?
   totaltime   Int?
-  transactions Transaksi[]
+  transactions Transaction[]
 
   @@map("parkings")
 }
 
-model Transaksi {
-  transaksiId   String    @id @default(uuid())
-  parkingId     String    @unique
-  idParking     Parking   @relation(fields: [parkingId], references: [parkingId])
-  totalprice    Float
-  TransactionStatus String @db.VarChar(255)
+model Transaction {
+  transactionId     String    @id @default(uuid())
+  parkingId         String    @unique
+  idParking         Parking   @relation(fields: [parkingId], references: [parkingId], onDelete: Cascade)
+  totalprice        Float
+  transactionstatus String    @db.VarChar(255)
   
-  @@map("transaksis")
+  @@map("transactions")
 }

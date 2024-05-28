@@ -38,8 +38,8 @@ describe("POST /api/parkings/out", function () {
 
       expect(response.status).toBe(200);
       expect(response.body.data).toBeDefined();
-      expect(response.body.data.code).toBe("test");
-      expect(response.body.data.status).toBe("end");
+      expect(response.body.data.updatedParking.code).toBe("test");
+      expect(response.body.data.updatedParking.status).toBe("end");
     });
 
   it("should return error if code is missing", async () => {

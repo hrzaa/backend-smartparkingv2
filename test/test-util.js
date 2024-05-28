@@ -51,6 +51,27 @@ export const createTestParkings = async () => {
   return createdParking.id;
 };
 
+export const removeAllTestTransactions = async () => {
+  const parkings = await prismaClient.parking.findMany({
+    where: {
+      code: "test",
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  const parkingIds = parkings.map((parking) => parking.id);
+
+  await prismaClient.transaction.deleteMany({
+    where: {
+      parkingId: {
+        in: parkingIds,
+      },
+    },
+  });
+}
+
 export const removeAllTestParkings = async () => {
   await prismaClient.parking.deleteMany({
     where: {

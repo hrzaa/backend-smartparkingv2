@@ -1,18 +1,16 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import { validate } from "../validation/validation.js";
-import { 
-    loginUserValidation, 
-    registerUserValidation,
-    getUserValidation,
-    updateUserValidation
+import {
+  loginUserValidation,
+  registerUserValidation,
+  getUserValidation,
+  updateUserValidation,
 } from "../validation/user-validation.js";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import { request } from "express";
 import jwt from "jsonwebtoken";
-
-
 
 const register = async (request) => {
   const user = validate(registerUserValidation, request);
@@ -47,7 +45,6 @@ const register = async (request) => {
   });
 };
 
-
 const login = async (request) => {
   const loginRequest = validate(loginUserValidation, request);
 
@@ -78,7 +75,7 @@ const login = async (request) => {
   const token = jwt.sign(
     { userId: user.userId, role: user.role },
     process.env.SECRET_KEY,
-    { expiresIn: 86400 }
+    { expiresIn: 3600 }
   );
 
   return prismaClient.user.update({
@@ -208,11 +205,11 @@ const logout = async (req) => {
   });
 };
 
-export default{
-    register, 
-    login,
-    get, 
-    all,
-    update, 
-    logout
-}
+export default {
+  register,
+  login,
+  get,
+  all,
+  update,
+  logout,
+};

@@ -14,6 +14,7 @@ const apiRouter = new express.Router();
     
     // apiRouter.delete("/api/parkings/remove/:parkingId", parkingController.removeParking);
     apiRouter.get("/api/parkings", parkingController.getAllParking);
+    apiRouter.get("/api/parkings/:parkingId", parkingController.getAllParkingById);
 
 
 export {

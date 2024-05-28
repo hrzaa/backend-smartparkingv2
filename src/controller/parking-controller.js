@@ -13,7 +13,9 @@ const parkingIn = async (req, res, next) => {
 
 const parkingOut = async (req, res, next) => {
   try {
-    const result = await parkingService.parkingOut(req.body);
+    const parking = req.body;
+    const transaction = req.params;
+    const result = await parkingService.parkingOut(parking, transaction);
     res.status(200).json({
       data: result,
     });
@@ -33,6 +35,17 @@ const getAllParking = async(req, res, next) => {
   }
 };
 
+const getAllParkingById = async (req, res, next) => {
+  try {
+    const result = await parkingService.getAllParkingById(req.params.parkingId);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const removeParking = async (req, res, next) => {
   try {
     await parkingService.removeParking(req.params);
@@ -48,6 +61,7 @@ export default {
   parkingIn,
   parkingOut,
   getAllParking,
+  getAllParkingById,
   removeParking
 
 };
