@@ -27,7 +27,7 @@ model User {
 
 model Parking {
   parkingId   String    @id @default(uuid())
-  code        String    @db.VarChar(10)
+  code        String    @db.VarChar(12)
   status      String    @db.VarChar(10)
   parkingin   DateTime  @default(now())
   parkingout  DateTime?

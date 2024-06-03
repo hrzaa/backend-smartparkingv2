@@ -57,7 +57,9 @@ const parkingOut = async (req1, req2) => {
     });
 
     if (!countParking) {
-        throw new ResponseError(404, "Parking Code not found");
+       throw new Error(
+         `Parking with code ${parking.code} not found.`
+       );
     }
 
     const timeIn = new Date(countParking.parkingin);
@@ -126,7 +128,7 @@ const getAllParking = async (request) => {
   });
 
   if (!parkings) {
-    throw new ResponseError(404, "Parking Code not found");
+    throw new Error(404, `Parking Code not found`);
   }
 
   return parkings;
@@ -144,7 +146,7 @@ const getAllParkingById = async (id) => {
   });
 
   if (!parkings) {
-    throw new ResponseError(404, "Parking Code not found");
+    throw new Error(404, `Parking Code not found`);
   }
 
   return parkings;
@@ -161,7 +163,7 @@ const removeParking = async (id) => {
   });
 
   if (totalInDatabase !== 1) {
-    throw new ResponseError(404, "parking is not found");
+    throw new Error(404, `Parking Code not found`);
   }
 
   return prismaClient.parking.delete({
