@@ -65,7 +65,18 @@ const parkingOut = async (req1, req2) => {
     const timeIn = new Date(countParking.parkingin);
     const totalTimeInHours = (dateUpdate - timeIn) / (1000 * 60 * 60);
 
-    const ratePerHour = 5000;
+    const rateRecord = await prismaClient.price.findFirst({
+      select: {
+        price: true,
+      },
+    });
+
+    if (!rateRecord || !rateRecord.price) {
+      throw new Error("Failed to fetch the rate per hour from the database.");
+    }
+
+    const ratePerHour = rateRecord.price;
+    
     let totalPrice = 0;
 
    if (totalTimeInHours === 0) {
