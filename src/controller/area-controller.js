@@ -11,6 +11,17 @@ const create = async (req, res, next) => {
   }
 };
 
+const update = async (req, res, next) => {
+  try {
+    const result = await areaService.update(req.body);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const getAllArea = async (req, res, next) => {
   try {
     const result = await areaService.getAllArea();
@@ -24,5 +35,6 @@ const getAllArea = async (req, res, next) => {
 
 export default {
   create,
+  update,
   getAllArea,
 };

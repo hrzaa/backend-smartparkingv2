@@ -6,8 +6,8 @@ import { createAreaValidation } from "../validation/area-validation.js";
 const create = async (request) => {
   const { area } = request;
 
-  // Menghapus area yang sudah ada sebelum membuat area baru
-  await prismaClient.area.deleteMany();
+//   // Menghapus area yang sudah ada sebelum membuat area baru
+//   await prismaClient.area.deleteMany();
 
   const areas = await Promise.all(
     area.map(async (areaName) => {
@@ -29,8 +29,73 @@ const create = async (request) => {
   return areas;
 };
 
+const update = async (request) => {
+  const { areas } = request;
 
-// const create = async (request) => {
+  // Check if areas is defined and is an array
+  if (!Array.isArray(areas)) {
+    throw new Error("Invalid input: areas must be an array");
+  }
+
+  // Set all areas' status to false
+  await prismaClient.area.updateMany({
+    data: {
+      status: false,
+    },
+  });
+
+  const updatedAreas = await Promise.all(
+    areas.map(async (areaName) => {
+      // Find the area by name
+      const existingArea = await prismaClient.area.findUnique({
+        where: {
+          area: areaName,
+        },
+      });
+
+      if (existingArea) {
+        // If the area exists, update it
+        const updatedArea = await prismaClient.area.update({
+          where: {
+            areaId: existingArea.areaId,
+          },
+          data: {
+            status: true,
+          },
+          select: {
+            areaId: true,
+            area: true,
+            status: true,
+          },
+        });
+
+        return updatedArea;
+      } else {
+        // If the area does not exist, create it
+        const createdArea = await prismaClient.area.create({
+          data: {
+            area: areaName,
+            status: true,
+          },
+          select: {
+            areaId: true,
+            area: true,
+            status: true,
+          },
+        });
+
+        return createdArea;
+      }
+    })
+  );
+
+  return updatedAreas;
+};
+
+
+
+
+// const update = async (request) => {
 //   const { area } = request;
 
 //   const areas = await Promise.all(
@@ -49,7 +114,7 @@ const create = async (request) => {
 //             areaId: existingArea.areaId,
 //           },
 //           data: {
-//             area: areaName,
+//             status: true
 //           },
 //           select: {
 //             areaId: true,
@@ -78,29 +143,6 @@ const create = async (request) => {
 //   return areas;
 // };
 
-// const update = async (request) => {
-//   const { area } = request;
-
-//   const areas = await Promise.all(
-//     area.map(async (area) => {
-//       // Membuat atau menyimpan data area ke dalam database
-//       const createdArea = await prismaClient.area.create({
-//         data: {
-//           area: area,
-//         },
-//         select: {
-//           areaId: true,
-//           area: true,
-//         },
-//       });
-
-//       return createdArea;
-//     })
-//   );
-
-//   return areas;
-// };
-
 const getAllArea = async (request) => {
   const areas = await prismaClient.area.findMany();
 
@@ -113,5 +155,7 @@ const getAllArea = async (request) => {
 
 export default {
   create,
+  update,
+//   createnew,
   getAllArea,
 };

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,54 +8,54 @@ datasource db {
 }
 
 model User {
-  userId        String      @id @default(uuid())
-  username      String      @unique @db.VarChar(255)
-  password      String      @db.VarChar(255)
-  role          String      @default("ADMIN")
-  token         String?     @db.VarChar(255)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  username  String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  token     String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+  role      String   @default("ADMIN")
+  updatedAt DateTime @updatedAt
+  userId    String   @id @default(uuid())
 
   @@map("users")
 }
 
 model Parking {
-  parkingId   String    @id @default(uuid())
-  code        String    @db.VarChar(12)
-  status      String    @db.VarChar(10)
-  parkingin   DateTime  @default(now())
-  parkingout  DateTime?
-  totaltime   Int?
-  transactions Transaction[]
+  code         String       @db.VarChar(12)
+  status       String       @db.VarChar(10)
+  parkingin    DateTime     @default(now())
+  parkingout   DateTime?
+  totaltime    Int?
+  parkingId    String       @id @default(uuid())
+  transactions Transaction?
 
   @@map("parkings")
 }
 
 model Transaction {
-  transactionId     String    @id @default(uuid())
-  parkingId         String    @unique
-  idParking         Parking   @relation(fields: [parkingId], references: [parkingId], onDelete: Cascade)
+  transactionId     String  @id @default(uuid())
+  parkingId         String  @unique
   totalprice        Float
-  transactionstatus String    @db.VarChar(255)
-  
+  transactionstatus String  @db.VarChar(255)
+  idParking         Parking @relation(fields: [parkingId], references: [parkingId], onDelete: Cascade)
+
   @@map("transactions")
 }
 
-
 model Price {
-  priceId       String      @id @default(uuid())
-  price         Float
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  priceId   String   @id @default(uuid())
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("prices")
 }
 
 model Area {
-  areaId        String      @id @default(uuid())
-  area          String      
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  areaId    String   @id @default(uuid())
+  area      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    Boolean  @default(false)
 
   @@map("areas")
 }
