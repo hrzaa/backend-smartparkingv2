@@ -2,12 +2,12 @@ import Joi from "joi";
 
 const registerUserValidation = Joi.object({
   username: Joi.string().max(100).required(),
-  password: Joi.string().max(100).required(),
+  password: Joi.string().min(8).max(100).required(),
 });
 
 const loginUserValidation = Joi.object({
   username: Joi.string().max(100).required(),
-  password: Joi.string().max(100).required()
+  password: Joi.string().min(8).max(100).required(),
 });
 
 const getUserValidation = Joi.object({

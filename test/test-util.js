@@ -31,6 +31,23 @@ export const removeTestUser = async () => {
   });
 };
 
+export const createTestPrice = async () => {
+  return await prismaClient.price.create({
+    data: {
+      price: 1000,
+    },
+  });
+};
+
+
+export const removeTestPrice = async () => {
+  await prismaClient.price.deleteMany({
+    where: {
+      price: 1000,
+    },
+  });
+};
+
 export const getTestUser = async () => {
   return await prismaClient.user.findUnique({
     where: {
@@ -40,6 +57,12 @@ export const getTestUser = async () => {
 };
 
 export const createTestParkings = async () => {
+  const createPrice = await prismaClient.price.create({
+    data: {
+      price: 1000,
+    },
+  });
+
   const createdParking = await prismaClient.parking.create({
     data: {
       code: "test",
@@ -76,6 +99,11 @@ export const removeAllTestParkings = async () => {
   await prismaClient.parking.deleteMany({
     where: {
       code: "test",
+    },
+  });
+  await prismaClient.price.deleteMany({
+    where: {
+      price: 1000,
     },
   });
 };
