@@ -12,7 +12,9 @@ const updateParkingValidation = Joi.object({
   code: Joi.string().max(12).required(),
 });
 
-const getParkingValidation = Joi.number().positive().required();
+const getParkingValidation = Joi.object({
+  parkingId: Joi.string().max(100).required(),
+});
 
 export { 
   createParkingValidation, 

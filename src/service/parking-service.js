@@ -164,23 +164,23 @@ const getAllParkingById = async (id) => {
 };
 
 
-const removeParking = async (id) => {
-  id = validate(getParkingValidation, id);
+const removeParking = async (parkingId) => {
+  const validatedId = validate(getParkingValidation, { parkingId });
 
   const totalInDatabase = await prismaClient.parking.count({
     where: {
-      id: id,
+      parkingId: validatedId.parkingId,
     },
   });
 
   if (totalInDatabase !== 1) {
-    throw new Error(404, `Parking Code not found`);
+    throw new Error(`Parking Code not found`);
   }
 
   return prismaClient.parking.delete({
     where: {
-      id: id,
-    }
+      parkingId: validatedId.parkingId,
+    },
   });
 };
 

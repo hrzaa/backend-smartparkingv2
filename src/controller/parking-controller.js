@@ -48,12 +48,17 @@ const getAllParkingById = async (req, res, next) => {
 
 const removeParking = async (req, res, next) => {
   try {
-    await parkingService.removeParking(req.params);
+    const { parkingId } = req.params; // Asumsikan bahwa parkingId ada di req.params
+    await parkingService.removeParking(parkingId);
     res.status(200).json({
       data: "OK",
     });
   } catch (e) {
-    next(e);
+    if (e.message === "Parking Code not found") {
+      res.status(404).json({ error: e.message });
+    } else {
+      next(e);
+    }
   }
 };
 
