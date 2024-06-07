@@ -15,8 +15,8 @@ publicRouter.post("/api/user/login", userController.login);
 publicRouter.post("/api/parkings/in", parkingController.parkingIn);
 publicRouter.post("/api/parkings/out", parkingController.parkingOut);
 
-publicRouter.post("/api/area/create", areaController.create);
-publicRouter.post("/api/area/update", areaController.update);
+publicRouter.post("/api/areas/create", areaController.create);
+publicRouter.post("/api/areas/update", areaController.update);
 publicRouter.get("/api/areas", areaController.getAllArea);
 
 publicRouter.get("/api/gates", gatesController.getStatusGate);
