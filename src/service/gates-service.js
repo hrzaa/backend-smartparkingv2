@@ -6,12 +6,20 @@ import { request } from "express";
 
 const gateIn = async (request) => {
   const { gateStatus } = request;
+  let time = 3000;
 
-  return await prismaClient.gates.update({
-    where: { gatesName: "OPENGATE" },
-    data: { gateStatus: gateStatus },
-    select: { gatesId: true, gatesName: true, gateStatus: true },
-  });
+  if (!gateStatus) {
+    time = 10000;
+  }
+
+  // Kembalikan gate status ke false setelah detik
+  setTimeout(async () => {
+    await prismaClient.gates.update({
+      where: { gatesName: "OPENGATE" },
+      data: { gateStatus: gateStatus },
+      select: { gatesId: true, gatesName: true, gateStatus: true },
+    });
+  }, time);
 };
 
 const getStatusGate = async (request) => {
