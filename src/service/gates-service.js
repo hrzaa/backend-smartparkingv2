@@ -1,29 +1,105 @@
 import { prismaClient } from "../application/database.js";
 import { validate } from "../validation/validation.js";
-import { GateValidation } from "../validation/gate-validation.js";
+import { gateValidation } from "../validation/gate-validation.js";
 import { ResponseError } from "../error/response-error.js";
+import { request } from "express";
 
+const gateIn = async (request) => {
+  const { gateStatus } = request;
+
+  return await prismaClient.gates.update({
+    where: { gatesName: "OPENGATE" },
+    data: { gateStatus: gateStatus },
+    select: { gatesId: true, gatesName: true, gateStatus: true },
+  });
+};
 
 const getStatusGate = async (request) => {
   const gates = await prismaClient.gates.findMany();
 
   if (!gates) {
-    throw new Error(404, `Gates not found`);
+    throw new ResponseError(404, `Gates not found`);
   }
 
   return gates;
 };
 
-const createGate = async (request) => {
-  const existingGates = await prismaClient.gates.count();
+const getStatusOpenGate = async (request) => {
+  const { gatesId } = request;
+  const openGates = await prismaClient.gates.findUnique({
+    where: {
+      gatesId: gatesId,
+    },
+  });
 
-  if (existingGates == 1) {
-    throw new Error(`Gates already exist`);
+  if (!openGates) {
+    throw new ResponseError(404, `Gates not found`);
+  }
+
+  return openGates;
+};
+
+const getStatusCloseGate = async (request) => {
+  const { gatesId } = request;
+  const closeGates = await prismaClient.gates.findUnique({
+    where: {
+      gatesId: gatesId,
+    },
+  });
+
+  if (!closeGates) {
+    throw new ResponseError(404, `Gates not found`);
+  }
+
+  return closeGates;
+};
+
+const createGate = async (request) => {
+  const { gatesName } = request; // Destruksi properti body dari request
+
+  const processedGatesName = gatesName.replace(/\s+/g, "").toUpperCase();
+
+  const existingGates = await prismaClient.gates.findUnique({
+    where: {
+      gatesName: processedGatesName,
+    },
+  });
+
+  if (existingGates) {
+    throw new ResponseError(`Gate with name "${gatesName}" already exists`);
   }
 
   return prismaClient.gates.create({
     data: {
-      gateStatus: false,
+      gatesName: processedGatesName,
+    },
+    select: {
+      gatesId: true,
+      gatesName: true,
+      gateStatus: true,
+    },
+  });
+};
+
+const updateGate = async (request) => {
+  const gate = validate(gateValidation, request);
+
+  const existingGate = await prismaClient.gates.findUnique({
+    where: {
+      gatesId: gate.gatesId,
+    },
+  });
+
+  if (!existingGate) {
+    throw new ResponseError(404, "Gate not found");
+  }
+
+  return prismaClient.gates.update({
+    where: {
+      gatesId: gate.gatesId,
+    },
+    data: {
+      gateStatus: gate.gateStatus,
     },
     select: {
       gatesId: true,
@@ -32,60 +108,11 @@ const createGate = async (request) => {
   });
 };
 
-const updateGate = async (request) => {
-    const gate = validate(GateValidation, request);
-
-    const existingGate = await prismaClient.gates.findUnique({
-      where: {
-        gatesId: gate.gatesId,
-      },
-    });
-
-    if (!existingGate) {
-      throw new ResponseError(404, "Gate not found");
-    }
-
-    return prismaClient.gates.update({
-      where: {
-        gatesId: gate.gatesId,
-      },
-      data: {
-        gateStatus: gate.gateStatus,
-      },
-      select: {
-        gatesId:true,
-        gateStatus: true,
-      },
-    }); 
-};
-
-// const closeGate = async (request) => {
-//   const existingGatesStatus = await prismaClient.gates.findFirst({
-//     where: {
-//       gateStatus: true,
-//     },
-//   });
-
-//   if (existingGatesStatus) {
-//     return prismaClient.gates.update({
-//       where: {
-//         gatesId: existingGatesStatus.gatesId,
-//       },
-//       data: {
-//         gateStatus: false, // Mengatur gateStatus menjadi false
-//       },
-//       select: {
-//         gatesId: true,
-//         gateStatus: true,
-//       },
-//     });
-//   }
-// };
-
-
 export default {
-    getStatusGate,
-    createGate,
-    updateGate,
-    // closeGate
+  getStatusGate,
+  getStatusOpenGate,
+  getStatusCloseGate,
+  createGate,
+  updateGate,
+  gateIn,
 };

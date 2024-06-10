@@ -1,8 +1,44 @@
 import gatesService from "../service/gates-service.js";
 
+const gateIn = async (req, res, next) => {
+  try {
+    const result = await gatesService.gateIn(req.body);
+    // console.log(req.body);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const getStatusGate = async (req, res, next) => {
   try {
     const result = await gatesService.getStatusGate(req.body);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getStatusOpenGate = async (req, res, next) => {
+  try {
+    const gate = req.params;
+    const result = await gatesService.getStatusOpenGate(gate);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getStatusCloseGate = async (req, res, next) => {
+  try {
+    const gate = req.params;
+    const result = await gatesService.getStatusCloseGate(gate);
     res.status(200).json({
       data: result,
     });
@@ -38,20 +74,12 @@ const updateGate = async (req, res, next) => {
   }
 };
 
-// const closeGate = async (req, res, next) => {
-//   try {
-//     const result = await gatesService.closeGate(req.body);
-//     res.status(200).json({
-//       data: result,
-//     });
-//   } catch (e) {
-//     next(e);
-//   }
-// };
-
 export default {
-  getStatusGate,  
+  getStatusGate,
+  getStatusOpenGate,
+  getStatusCloseGate,
   createGate,
   updateGate,
   // closeGate
+  gateIn,
 };

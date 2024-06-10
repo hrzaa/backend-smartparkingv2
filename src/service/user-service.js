@@ -75,7 +75,7 @@ const login = async (request) => {
   const token = jwt.sign(
     { userId: user.userId, role: user.role },
     process.env.SECRET_KEY,
-    { expiresIn: 3600 }
+    { expiresIn: 86400 }
   );
 
   return prismaClient.user.update({

@@ -1,6 +1,5 @@
 import { prismaClient } from "../application/database.js";
-import { validate } from "../validation/validation.js";
-import { createAreaValidation } from "../validation/area-validation.js";
+import { ResponseError } from "../error/response-error.js";
 
 
 const create = async (request) => {
@@ -36,7 +35,7 @@ const getAllArea = async (request) => {
    orderBy: { area: "asc" },
  });
 
- if (!areas) throw new Error(404, "Area not found");
+ if (!areas) throw new ResponseError(404, "Area not found");
 
  return areas;
 };

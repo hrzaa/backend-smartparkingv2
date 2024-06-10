@@ -18,6 +18,7 @@ const apiRouter = new express.Router();
     apiRouter.get("/api/parkings/:parkingId", parkingController.getAllParkingById);
 
     apiRouter.post("/api/price/create", priceController.create);
+    apiRouter.patch("/api/price/update/:priceId", priceController.update);
     apiRouter.get("/api/prices", priceController.getAllPrice);
 
 

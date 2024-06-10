@@ -2,7 +2,9 @@ import parkingService from "../service/parking-service.js";
 
 const parkingIn = async (req, res, next) => {
   try {
-    const result = await parkingService.parkingIn(req.body);
+    const parking = req.body;
+    // const gate = req.params;
+    const result = await parkingService.parkingIn(parking);
     res.status(200).json({
       data: result,
     });
@@ -15,7 +17,8 @@ const parkingOut = async (req, res, next) => {
   try {
     const parking = req.body;
     const transaction = req.params;
-    const result = await parkingService.parkingOut(parking, transaction);
+    const gate = req.params;
+    const result = await parkingService.parkingOut(parking, transaction, gate);
     res.status(200).json({
       data: result,
     });
@@ -24,14 +27,14 @@ const parkingOut = async (req, res, next) => {
   }
 };
 
-const getAllParking = async(req, res, next) => {
+const getAllParking = async (req, res, next) => {
   try {
     const result = await parkingService.getAllParking();
     res.status(200).json({
-      data: result
-    })
+      data: result,
+    });
   } catch (e) {
-    next(e)
+    next(e);
   }
 };
 
@@ -67,6 +70,5 @@ export default {
   parkingOut,
   getAllParking,
   getAllParkingById,
-  removeParking
-
+  removeParking,
 };

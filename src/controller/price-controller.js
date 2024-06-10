@@ -11,6 +11,20 @@ const create = async (req, res, next) => {
   }
 };
 
+const update = async (req, res, next) => {
+  try {
+    const data = req.body;
+    const id = req.params;
+
+    const result = await priceService.update(id, data);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const getAllPrice = async (req, res, next) => {
   try {
     const result = await priceService.getAllPrice();
@@ -24,5 +38,6 @@ const getAllPrice = async (req, res, next) => {
 
 export default {
   create,
+  update,
   getAllPrice,
 };

@@ -62,8 +62,9 @@ model Area {
 
 
 model Gates {
-  gatesId         String   @id @default(uuid())
-  gateStatus      Boolean  @default(false)
+  gatesId         String    @id @default(uuid())
+  gatesName       String    @unique
+  gateStatus      Boolean   @default(false)
 
   @@map("gates")
 }

@@ -1,14 +1,15 @@
 import { prismaClient } from "../application/database.js";
 import { validate } from "../validation/validation.js";
-import { 
-    createParkingValidation, 
-    updateParkingValidation,
-    getParkingValidation
- } from "../validation/parking-validation.js";
-import { transactionValidation } from "../validation/transaction-validation.js";
+import { ResponseError } from "../error/response-error.js";
+import {
+  createParkingValidation,
+  updateParkingValidation,
+  getParkingValidation,
+} from "../validation/parking-validation.js";
 
-const parkingIn = async (request) => {
-  const parking = validate(createParkingValidation, request);
+const parkingIn = async (reqParking) => {
+  const parking = validate(createParkingValidation, reqParking);
+  // const gate = reqGate;
 
   const existingParking = await prismaClient.parking.findFirst({
     where: {
@@ -18,12 +19,26 @@ const parkingIn = async (request) => {
   });
 
   if (existingParking) {
-    throw new Error(
+    throw new ResponseError(
+      404,
       `Parking with code ${parking.code} is already in progress.`
     );
   }
 
-  return prismaClient.parking.create({
+  // const existingGates = await prismaClient.gates.findFirst({
+  //   where: {
+  //     gatesId: gate.gatesId,
+  //   },
+  // });
+
+  // if (!existingGates) {
+  //   throw new ResponseError(
+  //     404,
+  //     `Gate with ID ${gate.gatesId} does not exist.`
+  //   );
+  // }
+
+  const createParkingIn = await prismaClient.parking.create({
     data: {
       code: parking.code,
       parkingin: parking.parkingin,
@@ -40,92 +55,159 @@ const parkingIn = async (request) => {
       totaltime: true,
     },
   });
+
+  // const openGate = await prismaClient.gates.findUnique({
+  //   where: { gatesName: "OPENGATE" },
+  // });
+
+  // if (!openGate.gateStatus) {
+  //   await prismaClient.gates.update({
+  //     where: { gatesName: "OPENGATE" },
+  //     data: { gateStatus: true },
+  //   });
+  // }
+  // const updatedGate = await prismaClient.gates.update({
+  //   where: {
+  //     gatesId: existingGates.gatesId,
+  //   },
+  //   data: {
+  //     gateStatus: true,
+  //   },
+  //   select: {
+  //     gatesId: true,
+  //     gateStatus: true,
+  //   },
+  // });
+
+  // Kembalikan gate status ke false setelah 5 detik
+  // setTimeout(async () => {
+  //   await prismaClient.gates.update({
+  //     where: { gatesName: "OPENGATE" },
+  //     data: {
+  //       gateStatus: false,
+  //     },
+  //   });
+  // }, 10000);
+
+  // console.log({ openGate });
+
+  // return { createParkingIn, openGate };
+  return { createParkingIn};
 };
 
+const parkingOut = async (reqParking) => {
+  const parking = validate(updateParkingValidation, reqParking);
+  // const gate = reqGate;
 
-const parkingOut = async (req1, req2) => {
-    const parking = validate(updateParkingValidation, req1);
-    // const transaction = validate(transactionValidation, req2);
+  const dateUpdate = new Date();
 
-    const dateUpdate = new Date();
+  const countParking = await prismaClient.parking.findFirst({
+    where: {
+      code: parking.code,
+      status: "start",
+    },
+  });
 
-    const countParking = await prismaClient.parking.findFirst({
-        where: {
-        code: parking.code,
-        status: "start",
-        },
-    });
+  if (!countParking) {
+    throw new ResponseError(
+      404,
+      `Parking with code ${parking.code} not found.`
+    );
+  }
 
-    if (!countParking) {
-       throw new Error(
-         `Parking with code ${parking.code} not found.`
-       );
-    }
+  // const existingGates = await prismaClient.gates.findFirst({
+  //   where: {
+  //     gatesId: gate.gatesId,
+  //   },
+  // });
 
-    const timeIn = new Date(countParking.parkingin);
-    const totalTimeInHours = (dateUpdate - timeIn) / (1000 * 60 * 60);
+  // if (!existingGates) {
+  //   throw new ResponseError(
+  //     404,
+  //     `Gate with ID ${gate.gatesId} does not exist.`
+  //   );
+  // }
 
-    const rateRecord = await prismaClient.price.findFirst({
-      select: {
-        price: true,
-      },
-    });
+  const timeIn = new Date(countParking.parkingin);
+  const totalTimeInHours = (dateUpdate - timeIn) / (1000 * 60 * 60);
 
-    if (!rateRecord || !rateRecord.price) {
-      throw new Error("Failed to fetch the rate per hour from the database.");
-    }
+  const rateRecord = await prismaClient.price.findFirst({
+    select: {
+      price: true,
+    },
+  });
 
-    const ratePerHour = rateRecord.price;
-    
-    let totalPrice = 0;
+  if (!rateRecord || !rateRecord.price) {
+    throw new ResponseError(
+      404,
+      "Failed to fetch the rate per hour from the database."
+    );
+  }
 
-   if (totalTimeInHours === 0) {
-     totalPrice = ratePerHour;
-   } else if (totalTimeInHours > 0 && totalTimeInHours <= 12) {
-     totalPrice = ratePerHour; // Tetap 5000 jika <= 12 jam
-   } else if (totalTimeInHours > 12 && totalTimeInHours <= 24) {
-     totalPrice = ratePerHour * 2; // 10000 jika antara 12 dan 24 jam
-   } else {
-     const extraDays = Math.ceil((totalTimeInHours - 24) / 24); // Hitung hari ekstra
-     totalPrice = ratePerHour * (2 + extraDays); // 10000 untuk 24 jam pertama, tambah 10000 setiap 24 jam setelahnya
-   }
+  const ratePerHour = rateRecord.price;
 
+  let totalPrice = 0;
 
-    const updatedParking = await prismaClient.parking.update({
-      where: {
-        parkingId: countParking.parkingId,
-      },
-      data: {
-        code: parking.code,
-        parkingout: dateUpdate,
-        totaltime: totalTimeInHours,
-        status: "end",
-      },
-      select: {
-        parkingId: true,
-        code: true,
-        parkingin: true,
-        parkingout: true,
-        status: true,
-        totaltime: true,
-      },
-    });
+  if (totalTimeInHours === 0) {
+    totalPrice = ratePerHour;
+  } else if (totalTimeInHours > 0 && totalTimeInHours <= 12) {
+    totalPrice = ratePerHour; // Tetap 5000 jika <= 12 jam
+  } else if (totalTimeInHours > 12 && totalTimeInHours <= 24) {
+    totalPrice = ratePerHour * 2; // 10000 jika antara 12 dan 24 jam
+  } else {
+    const extraDays = Math.ceil((totalTimeInHours - 24) / 24); // Hitung hari ekstra
+    totalPrice = ratePerHour * (2 + extraDays); // 10000 untuk 24 jam pertama, tambah 10000 setiap 24 jam setelahnya
+  }
 
-     const createTransaction = await prismaClient.transaction.create({
-       data: {
-         parkingId: updatedParking.parkingId,
-         totalprice: totalPrice,
-         transactionstatus: "completed",
-       },
-       select: {
-         transactionId: true,
-         parkingId: true,
-         totalprice: true,
-         transactionstatus: true,
-       },
-     });
+  const updatedParking = await prismaClient.parking.update({
+    where: {
+      parkingId: countParking.parkingId,
+    },
+    data: {
+      code: parking.code,
+      parkingout: dateUpdate,
+      totaltime: totalTimeInHours,
+      status: "end",
+    },
+    select: {
+      parkingId: true,
+      code: true,
+      parkingin: true,
+      parkingout: true,
+      status: true,
+      totaltime: true,
+    },
+  });
 
-     return { updatedParking, createTransaction };
+  const createTransaction = await prismaClient.transaction.create({
+    data: {
+      parkingId: updatedParking.parkingId,
+      totalprice: totalPrice,
+      transactionstatus: "completed",
+    },
+    select: {
+      transactionId: true,
+      parkingId: true,
+      totalprice: true,
+      transactionstatus: true,
+    },
+  });
+
+  // const updatedGate = await prismaClient.gates.update({
+  //   where: {
+  //     gatesId: existingGates.gatesId,
+  //   },
+  //   data: {
+  //     gateStatus: false,
+  //   },
+  //   select: {
+  //     gatesId: true,
+  //     gateStatus: true,
+  //   },
+  // });
+
+  // return { updatedParking, createTransaction, updatedGate };
+  return { updatedParking, createTransaction};
 };
 
 const getAllParking = async (request) => {
@@ -139,11 +221,11 @@ const getAllParking = async (request) => {
   });
 
   if (!parkings) {
-    throw new Error(404, `Parking Code not found`);
+    throw new ResponseError(404, `Parking Code not found`);
   }
 
   return parkings;
-}
+};
 
 const getAllParkingById = async (id) => {
   // const { id } = request.params;
@@ -157,12 +239,11 @@ const getAllParkingById = async (id) => {
   });
 
   if (!parkings) {
-    throw new Error(404, `Parking Code not found`);
+    throw new ResponseError(404, `Parking Code not found`);
   }
 
   return parkings;
 };
-
 
 const removeParking = async (parkingId) => {
   const validatedId = validate(getParkingValidation, { parkingId });
@@ -174,7 +255,7 @@ const removeParking = async (parkingId) => {
   });
 
   if (totalInDatabase !== 1) {
-    throw new Error(`Parking Code not found`);
+    throw new ResponseError(404, `Parking Code not found`);
   }
 
   return prismaClient.parking.delete({
@@ -184,11 +265,10 @@ const removeParking = async (parkingId) => {
   });
 };
 
-
 export default {
   parkingIn,
   parkingOut,
   getAllParking,
   getAllParkingById,
-  removeParking
+  removeParking,
 };
