@@ -3,7 +3,6 @@ import parkingService from "../service/parking-service.js";
 const parkingIn = async (req, res, next) => {
   try {
     const parking = req.body;
-    // const gate = req.params;
     const result = await parkingService.parkingIn(parking);
     res.status(200).json({
       data: result,
@@ -17,8 +16,7 @@ const parkingOut = async (req, res, next) => {
   try {
     const parking = req.body;
     const transaction = req.params;
-    const gate = req.params;
-    const result = await parkingService.parkingOut(parking, transaction, gate);
+    const result = await parkingService.parkingOut(parking, transaction);
     res.status(200).json({
       data: result,
     });
