@@ -9,7 +9,6 @@ import {
 
 const parkingIn = async (reqParking) => {
   const parking = validate(createParkingValidation, reqParking);
-  // const gate = reqGate;
 
   const existingParking = await prismaClient.parking.findFirst({
     where: {
@@ -24,19 +23,6 @@ const parkingIn = async (reqParking) => {
       `Parking with code ${parking.code} is already in progress.`
     );
   }
-
-  // const existingGates = await prismaClient.gates.findFirst({
-  //   where: {
-  //     gatesId: gate.gatesId,
-  //   },
-  // });
-
-  // if (!existingGates) {
-  //   throw new ResponseError(
-  //     404,
-  //     `Gate with ID ${gate.gatesId} does not exist.`
-  //   );
-  // }
 
   const createParkingIn = await prismaClient.parking.create({
     data: {
@@ -56,48 +42,11 @@ const parkingIn = async (reqParking) => {
     },
   });
 
-  // const openGate = await prismaClient.gates.findUnique({
-  //   where: { gatesName: "OPENGATE" },
-  // });
-
-  // if (!openGate.gateStatus) {
-  //   await prismaClient.gates.update({
-  //     where: { gatesName: "OPENGATE" },
-  //     data: { gateStatus: true },
-  //   });
-  // }
-  // const updatedGate = await prismaClient.gates.update({
-  //   where: {
-  //     gatesId: existingGates.gatesId,
-  //   },
-  //   data: {
-  //     gateStatus: true,
-  //   },
-  //   select: {
-  //     gatesId: true,
-  //     gateStatus: true,
-  //   },
-  // });
-
-  // Kembalikan gate status ke false setelah 5 detik
-  // setTimeout(async () => {
-  //   await prismaClient.gates.update({
-  //     where: { gatesName: "OPENGATE" },
-  //     data: {
-  //       gateStatus: false,
-  //     },
-  //   });
-  // }, 10000);
-
-  // console.log({ openGate });
-
-  // return { createParkingIn, openGate };
   return { createParkingIn};
 };
 
 const parkingOut = async (reqParking) => {
   const parking = validate(updateParkingValidation, reqParking);
-  // const gate = reqGate;
 
   const dateUpdate = new Date();
 
@@ -114,19 +63,6 @@ const parkingOut = async (reqParking) => {
       `Parking with code ${parking.code} not found.`
     );
   }
-
-  // const existingGates = await prismaClient.gates.findFirst({
-  //   where: {
-  //     gatesId: gate.gatesId,
-  //   },
-  // });
-
-  // if (!existingGates) {
-  //   throw new ResponseError(
-  //     404,
-  //     `Gate with ID ${gate.gatesId} does not exist.`
-  //   );
-  // }
 
   const timeIn = new Date(countParking.parkingin);
   const totalTimeInHours = (dateUpdate - timeIn) / (1000 * 60 * 60);
@@ -193,20 +129,6 @@ const parkingOut = async (reqParking) => {
     },
   });
 
-  // const updatedGate = await prismaClient.gates.update({
-  //   where: {
-  //     gatesId: existingGates.gatesId,
-  //   },
-  //   data: {
-  //     gateStatus: false,
-  //   },
-  //   select: {
-  //     gatesId: true,
-  //     gateStatus: true,
-  //   },
-  // });
-
-  // return { updatedParking, createTransaction, updatedGate };
   return { updatedParking, createTransaction};
 };
 

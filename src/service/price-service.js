@@ -32,8 +32,6 @@ const create = async (request) => {
 const update = async (id, data) => {
   const priceId = id.priceId;
   const newPrice = data.price;
-  // const idReq = validate(getPriceValidation, id);
-  // const priceReq = validate(updatePriceValidation, data);
 
   const existingPrice = await prismaClient.price.findUnique({
     where: {

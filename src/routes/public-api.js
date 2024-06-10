@@ -12,7 +12,7 @@ publicRouter.post("/api/user/login", userController.login);
 
 // PARKING IN API
 publicRouter.post("/api/parkings/in", parkingController.parkingIn);
-publicRouter.post("/api/parkings/out/:gatesI", parkingController.parkingOut);
+publicRouter.post("/api/parkings/out", parkingController.parkingOut);
 
 publicRouter.post("/api/areas/create", areaController.create);
 publicRouter.post("/api/areas/update", areaController.update);
