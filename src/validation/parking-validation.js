@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const createParkingValidation = Joi.object({
-  code: Joi.string().max(12).required(),
+  code: Joi.string().min(3).max(9).required(),
   parkingin: Joi.date().iso().optional(),
   parkingout: Joi.date().iso().optional(),
   totaltime: Joi.number().optional(),
@@ -9,7 +9,7 @@ const createParkingValidation = Joi.object({
 });
 
 const updateParkingValidation = Joi.object({
-  code: Joi.string().max(12).required(),
+  code: Joi.string().min(3).max(9).required(),
 });
 
 const getParkingValidation = Joi.object({

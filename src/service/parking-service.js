@@ -7,8 +7,24 @@ import {
   getParkingValidation,
 } from "../validation/parking-validation.js";
 
+const formatRequest = (data) => {
+  return Object.fromEntries(
+    Object.entries(data).map(([key, value]) => {
+      if (typeof value === "string") {
+        return [key, value.replace(/\s+/g, "").toUpperCase()]; // hilang spasi dan UPPERCASE
+      }
+      return [key, value];
+    })
+  );
+};
+
+
 const parkingIn = async (reqParking) => {
-  const parking = validate(createParkingValidation, reqParking);
+  // Sanitize and format the request data
+  const sanitizedParking = formatRequest(reqParking);
+
+  // Validate the sanitized request data
+  const parking = validate(createParkingValidation, sanitizedParking);
 
   const existingParking = await prismaClient.parking.findFirst({
     where: {
@@ -42,11 +58,15 @@ const parkingIn = async (reqParking) => {
     },
   });
 
-  return { createParkingIn};
+  return { createParkingIn };
 };
 
 const parkingOut = async (reqParking) => {
-  const parking = validate(updateParkingValidation, reqParking);
+  // Sanitize and format the request data
+  const sanitizedParking = formatRequest(reqParking);
+
+  // Validate the sanitized request data
+  const parking = validate(updateParkingValidation, sanitizedParking);
 
   const dateUpdate = new Date();
 
@@ -87,12 +107,12 @@ const parkingOut = async (reqParking) => {
   if (totalTimeInHours === 0) {
     totalPrice = ratePerHour;
   } else if (totalTimeInHours > 0 && totalTimeInHours <= 12) {
-    totalPrice = ratePerHour; // Tetap 5000 jika <= 12 jam
+    totalPrice = ratePerHour; // jika <= 12 jam harga 1 kali ratePerHour
   } else if (totalTimeInHours > 12 && totalTimeInHours <= 24) {
-    totalPrice = ratePerHour * 2; // 10000 jika antara 12 dan 24 jam
+    totalPrice = ratePerHour * 2; // jika antara 12 dan 24 jam harga 2 kali ratePerHour
   } else {
     const extraDays = Math.ceil((totalTimeInHours - 24) / 24); // Hitung hari ekstra
-    totalPrice = ratePerHour * (2 + extraDays); // 10000 untuk 24 jam pertama, tambah 10000 setiap 24 jam setelahnya
+    totalPrice = ratePerHour * (2 + extraDays); // untuk 24 jam pertama harga 2 kali ratePerHour, tambah 2 kali ratePerHour setiap 24 jam setelahnya
   }
 
   const updatedParking = await prismaClient.parking.update({
@@ -129,7 +149,7 @@ const parkingOut = async (reqParking) => {
     },
   });
 
-  return { updatedParking, createTransaction};
+  return { updatedParking, createTransaction };
 };
 
 const getAllParking = async (request) => {
