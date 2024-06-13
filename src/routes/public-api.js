@@ -14,13 +14,19 @@ publicRouter.post("/api/user/login", userController.login);
 publicRouter.post("/api/parkings/in", parkingController.parkingIn);
 publicRouter.post("/api/parkings/out", parkingController.parkingOut);
 
-publicRouter.post("/api/areas/create", areaController.create);
-publicRouter.post("/api/areas/update", areaController.update);
-publicRouter.get("/api/areas", areaController.getAllArea);
+// PUNYA ALDINI
+publicRouter.get("/api/mainareas", getAllMainAreas);
+publicRouter.post("/api/mainareas", createMainAreas);
+
+publicRouter.get("/api/areas", getAllAreas);
+publicRouter.post("/api/areas", updateAllAreas);
 
 publicRouter.get("/api/gates", gatesController.getStatusGate);
 publicRouter.get("/api/opengates/:gatesId", gatesController.getStatusOpenGate);
-publicRouter.get("/api/closegates/:gatesId",gatesController.getStatusCloseGate);
+publicRouter.get(
+  "/api/closegates/:gatesId",
+  gatesController.getStatusCloseGate
+);
 publicRouter.post("/api/gates/in", gatesController.gateIn);
 publicRouter.post("/api/gates/createGate", gatesController.createGate);
 publicRouter.patch("/api/gates/update/:gatesId", gatesController.updateGate);
