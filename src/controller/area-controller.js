@@ -1,40 +1,62 @@
-import areaService from "../service/area-service.js";
+import { PrismaClient } from "@prisma/client";
 
-const create = async (req, res, next) => {
-  try {
-    const result = await areaService.create(req.body);
-    res.status(200).json({
-      data: result,
-    });
-  } catch (e) {
-    next(e);
-  }
+const prisma = new PrismaClient();
+
+export const getAllMainAreas = async (req, res) => {
+  const mainAreas = await prisma.mainArea.findMany({
+    orderBy: { name: "asc" },
+    include: { areas: true },
+  });
+  res.json(mainAreas);
 };
 
-const update = async (req, res, next) => {
-  try {
-    const result = await areaService.update(req.body);
-    res.status(200).json({
-      data: result,
+export const createMainAreas = async (req, res) => {
+  const mainAreas = req.body;
+
+  await prisma.area.deleteMany({});
+  await prisma.mainArea.deleteMany({});
+
+  for (const data of mainAreas) {
+    await prisma.mainArea.create({
+      data: {
+        id: data.area_id,
+        name: data.area_name,
+      },
     });
-  } catch (e) {
-    next(e);
+    for (const item of data.area_names) {
+      await prisma.area.create({
+        data: {
+          mainAreaId: data.area_id,
+          name: item,
+        },
+      });
+    }
   }
+
+  const datas = await prisma.mainArea.findMany({
+    include: { areas: true },
+  });
+
+  res.status(201).json(datas);
 };
 
-const getAllArea = async (req, res, next) => {
-  try {
-    const result = await areaService.getAllArea();
-    res.status(200).json({
-      data: result,
-    });
-  } catch (e) {
-    next(e);
-  }
+export const getAllAreas = async (req, res) => {
+  const areas = await prisma.area.findMany({
+    orderBy: { name: "asc" },
+  });
+
+  res.json(areas);
 };
 
-export default {
-  create,
-  update,
-  getAllArea,
+export const updateAllAreas = async (req, res) => {
+  const areas = req.body;
+
+  for (const data of areas) {
+    await prisma.area.update({
+      where: { name: data.area },
+      data: { status: Boolean(data.status) },
+    });
+  }
+
+  res.status(200).json(areas);
 };
