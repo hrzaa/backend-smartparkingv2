@@ -1,7 +1,12 @@
 import express from "express";
 import userController from "../controller/user-controller.js";
 import parkingController from "../controller/parking-controller.js";
-import areaController from "../controller/area-controller.js";
+import {
+  getAllAreas,
+  getAllMainAreas,
+  createMainAreas,
+  updateAllAreas,
+} from "../controller/area-controller.js";
 import gatesController from "../controller/gates-controller.js";
 
 const publicRouter = new express.Router();
