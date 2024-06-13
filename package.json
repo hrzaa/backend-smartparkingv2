@@ -4,8 +4,7 @@
   "description": "backend api smartparking v2",
   "main": "src/main.js",
   "scripts": {
-    "test": "jest -i",
-    "dev": "nodemon src/main.js"
+    "test": "jest -i"
   },
   "jest": {
     "transform": {
