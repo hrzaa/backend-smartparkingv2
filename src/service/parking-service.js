@@ -6,6 +6,7 @@ import {
   updateParkingValidation,
   getParkingValidation,
 } from "../validation/parking-validation.js";
+import { createTransaction } from "./midtransService.js";
 
 const formatRequest = (data) => {
   return Object.fromEntries(
@@ -67,6 +68,8 @@ const parkingOut = async (reqParking) => {
 
   // Validate the sanitized request data
   const parking = validate(updateParkingValidation, sanitizedParking);
+
+  // const parking = validate(createParkingValidation, reqParking);
 
   const dateUpdate = new Date();
 
@@ -135,21 +138,52 @@ const parkingOut = async (reqParking) => {
     },
   });
 
-  const createTransaction = await prismaClient.transaction.create({
+  // Create payment transaction
+  const transactionDetails = {
+    enabled_payments: ["other_qris"],
+    transaction_details: {
+      order_id: updatedParking.parkingId,
+      gross_amount: totalPrice,
+    },
+  };
+
+  const transaction = await createTransaction(transactionDetails);
+  const savedTransaction = await prismaClient.transaction.create({
     data: {
       parkingId: updatedParking.parkingId,
       totalprice: totalPrice,
-      transactionstatus: "completed",
+      transactionstatus: "PENDING_PAYMENT",
+      snap_token: transaction.token,
+      snap_redirect_url: transaction.redirect_url,
+      payment_method: "other_qris",
+      // paymentResponse: transaction, // Save the response for auditing
     },
     select: {
       transactionId: true,
       parkingId: true,
       totalprice: true,
       transactionstatus: true,
+      snap_token: true,
+      snap_redirect_url: true,
+      payment_method: true,
     },
   });
 
-  return { updatedParking, createTransaction };
+  // const createTransaction = await prismaClient.transaction.create({
+  //   data: {
+  //     parkingId: updatedParking.parkingId,
+  //     totalprice: totalPrice,
+  //     transactionstatus: "completed",
+  //   },
+  //   select: {
+  //     transactionId: true,
+  //     parkingId: true,
+  //     totalprice: true,
+  //     transactionstatus: true,
+  //   },
+  // });
+
+   return { updatedParking, savedTransaction };
 };
 
 const getAllParking = async (request) => {
