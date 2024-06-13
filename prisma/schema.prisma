@@ -50,21 +50,32 @@ model Price {
   @@map("prices")
 }
 
-model Area {
-  areaId    String   @id @default(uuid())
-  area      String
+model MainArea {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  areas     Area[] // Relasi one-to-many dari MainArea ke Area
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  status    Boolean  @default(false)
+
+  @@map("main_areas")
+}
+
+model Area {
+  id         String    @id @default(uuid())
+  mainArea   MainArea? @relation(fields: [mainAreaId], references: [id]) // Relasi many-to-one dari Area ke MainArea
+  mainAreaId String
+  name       String    @unique
+  status     Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   @@map("areas")
 }
 
-
 model Gates {
-  gatesId         String    @id @default(uuid())
-  gatesName       String    @unique
-  gateStatus      Boolean   @default(false)
+  gatesId    String  @id @default(uuid())
+  gatesName  String  @unique
+  gateStatus Boolean @default(false)
 
   @@map("gates")
 }
