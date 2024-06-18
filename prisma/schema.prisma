@@ -32,7 +32,7 @@ model Parking {
 }
 
 model Transaction {
-  transactionId     String  @id @default(uuid())
+  transactionId     String  @id @db.VarChar(100)
   parkingId         String  @unique
   totalprice        Float
   transactionstatus transactions_status
