@@ -10,14 +10,10 @@ import { request } from "express";
 
 const create = async (request) => {
   const price = validate(createPriceValidation, request);
+  const existingPrice = await prismaClient.price.findFirst();
 
-  const countPrice = await prismaClient.parking.count();
-
-  if (countPrice > 1) {
-    throw new ResponseError(
-      404,
-      `Price is already exist`
-    );
+  if (existingPrice) {
+    throw new ResponseError(404, "Price is already exist");
   }
  
   return prismaClient.price.create({
