@@ -19,17 +19,18 @@ const getTransaction = async () => {
 };
 
 
-const getTransactionById = async (transactionId) => {
+const getTransactionById = async ({transactionId}) => {
   const transaction = await prismaClient.transaction.findUnique({
     where: {
       transactionId: transactionId,
     },
     select: {
-        transactionId:true,
-        parkingId:true,
-        totalprice:true
-    }
-   
+      transactionId: true,
+      parkingId: true,
+      transactionstatus: true,
+      totalprice: true,
+      payment_method: true,
+    },
   });
 
   if (!transaction) {
@@ -39,13 +40,13 @@ const getTransactionById = async (transactionId) => {
   return transaction;
 };
 
-const updateTransactionStatus = async (transactionId, transactionstatus, payment_method = null) => {
+const updateTransactionStatus = async ({transactionId, transaction_status, payment_method = null}) => {
    const transaction = await prismaClient.transaction.update({
      where: {
        transactionId: transactionId,
      },
      data: {
-       transactionstatus: transactionstatus,
+       transactionstatus: transaction_status,
        payment_method: payment_method,
        updated_at: new Date(), // Optional but good practice
      },

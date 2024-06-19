@@ -14,8 +14,9 @@ const getTransaction = async (req, res, next) => {
 };
 
 const getTransactionById = async (req, res, next) => {
+  const { transactionId } = req.params;
   try {
-    const result = await transactionService.getTransactionById(req.params.transactionId);
+    const result = await transactionService.getTransactionById({transactionId});
     res.status(200).json({
       data: result,
     });
@@ -25,12 +26,12 @@ const getTransactionById = async (req, res, next) => {
 };
 
 const updateTransactionStatus = async (req, res, next) => {
-    const transactionId = req.params.transactionId;
-    const {transactionstatus, payment_method} = req.body;
+    const { transactionId } = req.params;
+    const {transaction_status, payment_method} = req.body;
     try {
       const result = await transactionService.updateTransactionStatus(
         transactionId,
-        transactionstatus, 
+        transaction_status,
         payment_method
       );
       res.status(200).json({
@@ -57,22 +58,37 @@ const updateStatusBasedOnMidtransResponse = async(transactionId, data) => {
     }
 
     let responseData = null;
-    let transactionStatus = data.transactionStatus;
+    let transactionStatus = data.transaction_status;
     let fraudStatus = data.fraudStatus;
 
     if(transactionStatus == 'capture'){
         if(fraudStatus == 'accept'){
-            const transaction = await transactionService.updateTransactionStatus({transactionId, status:PAID, payment_method:data.payment_type});
+            const transaction =
+              await transactionService.updateTransactionStatus({
+                transactionId,
+                transaction_status: PAID,
+                payment_method: data.payment_type,
+              });
             responseData = transaction;
         }
     }else if(transactionStatus == 'settlement'){
-        const transaction = await transactionService.updateTransactionStatus({transactionId, status:PAID, payment_method:data.payment_type});
+        const transaction = await transactionService.updateTransactionStatus({
+          transactionId,
+          transaction_status: PAID,
+          payment_method: data.payment_type,
+        });
         responseData = transaction;
     }else if(transactionStatus == 'cancel' || transactionStatus == 'deny' || transactionStatus == 'expire'){
-        const transaction = await transactionService.updateTransactionStatus({transactionId, status:CANCELED});
+        const transaction = await transactionService.updateTransactionStatus({
+          transactionId,
+          transaction_status: CANCELED,
+        });
         responseData = transaction;
     }else if(transactionStatus == 'pending'){
-        const transaction = await transactionService.updateTransactionStatus({transactionId, status:PENDING_PAYMENT});
+        const transaction = await transactionService.updateTransactionStatus({
+          transactionId,
+          transaction_status: PENDING_PAYMENT,
+        });
         responseData = transaction;
     }
 
@@ -85,13 +101,17 @@ const updateStatusBasedOnMidtransResponse = async(transactionId, data) => {
 export const trxNotif = async(req, res, next) => {
     const data = req.body;
 
-    transactionService.getTransactionById({transactionId:data.order_id}).then((transaction) => {
-        if(transaction){
-            updateStatusBasedOnMidtransResponse(transaction.id, data).then(result => {
-                console.log('result', result)
-            })
+    transactionService
+      .getTransactionById({ transactionId: data.order_id })
+      .then((result) => {
+        if (result) {
+          updateStatusBasedOnMidtransResponse(result.transactionId, data).then(
+            (result) => {
+              console.log("result", result);
+            }
+          );
         }
-    })
+      });
     res.status(200).json({
         status:'success', 
         message: 'OK'
