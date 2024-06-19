@@ -12,6 +12,18 @@ const gateIn = async (req, res, next) => {
   }
 };
 
+const gateOut = async (req, res, next) => {
+  try {
+    const result = await gatesService.gateOut(req.body);
+    // console.log(req.body);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const getStatusGate = async (req, res, next) => {
   try {
     const result = await gatesService.getStatusGate(req.body);
@@ -82,4 +94,5 @@ export default {
   updateGate,
   // closeGate
   gateIn,
+  gateOut,
 };

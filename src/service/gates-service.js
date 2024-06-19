@@ -6,10 +6,10 @@ import { request } from "express";
 
 const gateIn = async (request) => {
   const { gateStatus } = request;
-  let time = 3000;
+  let time = 1000;
 
   if (!gateStatus) {
-    time = 10000;
+    time = 1000;
   }
 
   // Kembalikan gate status ke false setelah detik
@@ -22,6 +22,24 @@ const gateIn = async (request) => {
   }, time);
 };
 
+const gateOut = async(request)=>{
+  const { gateStatus } = request;
+  let time = 1000;
+
+  if (!gateStatus) {
+    time = 1000;
+  }
+
+  // Kembalikan gate status ke false setelah detik
+  setTimeout(async () => {
+    await prismaClient.gates.update({
+      where: { gatesName: "CLOSEGATE" },
+      data: { gateStatus: gateStatus },
+      select: { gatesId: true, gatesName: true, gateStatus: true },
+    });
+  }, time);
+}
+
 const getStatusGate = async (request) => {
   const gates = await prismaClient.gates.findMany();
 
@@ -33,10 +51,9 @@ const getStatusGate = async (request) => {
 };
 
 const getStatusOpenGate = async (request) => {
-  const { gatesId } = request;
   const openGates = await prismaClient.gates.findUnique({
     where: {
-      gatesId: gatesId,
+      gatesId: "c8cf0348-f657-462d-baf6-3a9a5848517c",
     },
   });
 
@@ -48,10 +65,9 @@ const getStatusOpenGate = async (request) => {
 };
 
 const getStatusCloseGate = async (request) => {
-  const { gatesId } = request;
   const closeGates = await prismaClient.gates.findUnique({
     where: {
-      gatesId: gatesId,
+      gatesId: "475cb3c9-c6d0-4765-bc48-625919a022a7",
     },
   });
 
@@ -123,4 +139,5 @@ export default {
   createGate,
   updateGate,
   gateIn,
+  gateOut
 };
