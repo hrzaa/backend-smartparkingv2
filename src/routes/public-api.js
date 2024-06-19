@@ -36,11 +36,8 @@ publicRouter.get("/api/areas", getAllAreas);
 publicRouter.post("/api/areas", updateAllAreas);
 
 publicRouter.get("/api/gates", gatesController.getStatusGate);
-publicRouter.get("/api/opengates/:gatesId", gatesController.getStatusOpenGate);
-publicRouter.get(
-  "/api/closegates/:gatesId",
-  gatesController.getStatusCloseGate
-);
+publicRouter.get("/api/opengates", gatesController.getStatusOpenGate);
+publicRouter.get("/api/closegates", gatesController.getStatusCloseGate);
 publicRouter.post("/api/gates/in", gatesController.gateIn);
 publicRouter.post("/api/gates/createGate", gatesController.createGate);
 publicRouter.patch("/api/gates/update/:gatesId", gatesController.updateGate);
