@@ -26,18 +26,22 @@ const gateOut = async(request)=>{
   const { gateStatus } = request;
   let time = 1000;
 
-  if (!gateStatus) {
-    time = 1000;
-  }
+  // First update to true
+  const updatedGate = await prismaClient.gates.update({
+    where: { gatesName: "CLOSEGATE" },
+    data: { gateStatus: gateStatus },
+    select: { gatesId: true, gatesName: true, gateStatus: true },
+  });
 
-  // Kembalikan gate status ke false setelah detik
+  // Schedule reversion to false after 5 seconds
   setTimeout(async () => {
     await prismaClient.gates.update({
       where: { gatesName: "CLOSEGATE" },
-      data: { gateStatus: gateStatus },
+      data: { gateStatus: false },
       select: { gatesId: true, gatesName: true, gateStatus: true },
     });
-  }, time);
+  }, 10000);
+   return updatedGate;
 }
 
 const getStatusGate = async (request) => {

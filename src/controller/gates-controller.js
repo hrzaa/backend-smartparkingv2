@@ -92,7 +92,6 @@ export default {
   getStatusCloseGate,
   createGate,
   updateGate,
-  // closeGate
   gateIn,
   gateOut,
 };

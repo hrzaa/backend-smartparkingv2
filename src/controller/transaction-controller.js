@@ -1,4 +1,5 @@
 import transactionService from "../service/transaction-service.js";
+import gatesService from "../service/gates-service.js";
 import crypto from'crypto';
 import{PAID, PENDING_PAYMENT, CANCELED} from "../utils/constant.js"
 
@@ -63,21 +64,24 @@ const updateStatusBasedOnMidtransResponse = async(transactionId, data) => {
 
     if(transactionStatus == 'capture'){
         if(fraudStatus == 'accept'){
-            const transaction =
-              await transactionService.updateTransactionStatus({
-                transactionId,
-                transaction_status: PAID,
-                payment_method: data.payment_type,
-              });
-            responseData = transaction;
+          const transaction = await transactionService.updateTransactionStatus({
+            transactionId,
+            transaction_status: PAID,
+            payment_method: data.payment_type,
+          });
+          responseData = transaction;
+          // Update gate status to true
+          await gatesService.gateOut({ gateStatus: true });
         }
     }else if(transactionStatus == 'settlement'){
-        const transaction = await transactionService.updateTransactionStatus({
-          transactionId,
-          transaction_status: PAID,
-          payment_method: data.payment_type,
-        });
-        responseData = transaction;
+      const transaction = await transactionService.updateTransactionStatus({
+        transactionId,
+        transaction_status: PAID,
+        payment_method: data.payment_type,
+      });
+      responseData = transaction;
+      // Update gate status to true
+      await gatesService.gateOut({ gateStatus: true });
     }else if(transactionStatus == 'cancel' || transactionStatus == 'deny' || transactionStatus == 'expire'){
         const transaction = await transactionService.updateTransactionStatus({
           transactionId,
@@ -94,7 +98,7 @@ const updateStatusBasedOnMidtransResponse = async(transactionId, data) => {
 
     return {
         status: 'success',
-        data: responseData
+        data: responseData,
     }
 }
 

@@ -150,13 +150,12 @@ const parkingOut = async (reqParking) => {
     item_details: [
       {
         id: updatedParking.parkingId,
-        price: totalPrice, // Use the calculated total price
-        quantity: 1, // Set quantity to 1 if the totalPrice is for one item
+        price: totalPrice,
+        quantity: 1,
         name: "Parking Fee",
       },
     ],
     callbacks: {
-      // finish: `http://localhost:5000/api/callback-transaction`,
       finish: `${process.env.FRONTEND_URL}payment`,
     },
   };

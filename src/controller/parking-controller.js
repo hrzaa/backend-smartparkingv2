@@ -63,40 +63,6 @@ const removeParking = async (req, res, next) => {
   }
 };
 
-// const getTransaction = async (req, res, next) => {
-//   try {
-//     const result = await parkingService.getTransaction();
-//     res.status(200).json({
-//       data: result,
-//     });
-//   } catch (e) {
-//     next(e);
-//   }
-// };
-
-// const callback = async (req, res, next) => {
-//   const { order_id, transaction_status } = req.query;
-//   try {
-//     const result = await parkingService.callback(order_id, transaction_status);
-//     res.status(200).json({
-//       data: result,
-//     });
-//   } catch (e) {
-//     next(e);
-//   }
-// };
-
-// const trxNotif = async(req, res, next) => {
-//   const data = req.body;
-//   try {
-//     res.status(200).json({
-//       status: "success",
-//       message: 'OK'
-//     });
-//   } catch (error) {
-//     next(e);
-//   }
-// }
 
 export default {
   parkingIn,
@@ -104,7 +70,4 @@ export default {
   getAllParking,
   getAllParkingById,
   removeParking,
-  // getTransaction,
-  // callback, 
-  // trxNotif
 };
