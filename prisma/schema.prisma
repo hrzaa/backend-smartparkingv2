@@ -32,10 +32,15 @@ model Parking {
 }
 
 model Transaction {
-  transactionId     String  @id @default(uuid())
+  transactionId     String  @id @db.VarChar(100)
   parkingId         String  @unique
   totalprice        Float
-  transactionstatus String  @db.VarChar(255)
+  transactionstatus transactions_status
+  snap_token         String?             @db.VarChar(255)
+  snap_redirect_url  String?             @db.VarChar(255)
+  payment_method     String?             @db.VarChar(110)
+  created_at         DateTime?           @default(now()) @db.Timestamp(0)
+  updated_at         DateTime?           @default(now()) @db.Timestamp(0)
   idParking         Parking @relation(fields: [parkingId], references: [parkingId], onDelete: Cascade)
 
   @@map("transactions")
@@ -78,4 +83,10 @@ model Gates {
   gateStatus Boolean @default(false)
 
   @@map("gates")
+}
+
+enum transactions_status {
+  PENDING_PAYMENT
+  PAID
+  CANCELED
 }
