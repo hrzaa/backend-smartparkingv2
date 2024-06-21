@@ -57,7 +57,8 @@ const getStatusGate = async (request) => {
 const getStatusOpenGate = async (request) => {
   const openGates = await prismaClient.gates.findUnique({
     where: {
-      gatesId: "c8cf0348-f657-462d-baf6-3a9a5848517c",
+      // gatesId: "c8cf0348-f657-462d-baf6-3a9a5848517c",
+      gatesName: "OPENGATE",
     },
   });
 
@@ -71,7 +72,7 @@ const getStatusOpenGate = async (request) => {
 const getStatusCloseGate = async (request) => {
   const closeGates = await prismaClient.gates.findUnique({
     where: {
-      gatesId: "475cb3c9-c6d0-4765-bc48-625919a022a7",
+      gatesName: "CLOSEGATE",
     },
   });
 
