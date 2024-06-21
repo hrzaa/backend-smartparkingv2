@@ -32,15 +32,10 @@ model Parking {
 }
 
 model Transaction {
-  transactionId     String  @id @db.VarChar(100)
+  transactionId     String  @id @default(uuid())
   parkingId         String  @unique
   totalprice        Float
-  transactionstatus transactions_status
-  snap_token         String?             @db.VarChar(255)
-  snap_redirect_url  String?             @db.VarChar(255)
-  payment_method     String?             @db.VarChar(110)
-  created_at         DateTime?           @default(now()) @db.Timestamp(0)
-  updated_at         DateTime?           @default(now()) @db.Timestamp(0)
+  transactionstatus String  @db.VarChar(255)
   idParking         Parking @relation(fields: [parkingId], references: [parkingId], onDelete: Cascade)
 
   @@map("transactions")
@@ -55,26 +50,26 @@ model Price {
   @@map("prices")
 }
 
-model MainArea {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  areas     Area[] // Relasi one-to-many dari MainArea ke Area
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model ParkingArea {
+  id            String         @id @default(uuid())
+  parking_name  String         @unique
+  parkingSpaces ParkingSpace[] // Relasi one-to-many dari MainArea ke Area
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
-  @@map("main_areas")
+  @@map("parking_areas")
 }
 
-model Area {
-  id         String    @id @default(uuid())
-  mainArea   MainArea? @relation(fields: [mainAreaId], references: [id]) // Relasi many-to-one dari Area ke MainArea
-  mainAreaId String
-  name       String    @unique
-  status     Boolean   @default(false)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+model ParkingSpace {
+  id            String       @id @default(uuid())
+  parkingArea   ParkingArea? @relation(fields: [parkingAreaId], references: [id], onDelete: Cascade) // Relasi many-to-one dari Area ke MainArea
+  parkingAreaId String
+  space_name    String       @unique
+  status        Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
-  @@map("areas")
+  @@map("parking_spaces")
 }
 
 model Gates {
@@ -83,10 +78,4 @@ model Gates {
   gateStatus Boolean @default(false)
 
   @@map("gates")
-}
-
-enum transactions_status {
-  PENDING_PAYMENT
-  PAID
-  CANCELED
 }
