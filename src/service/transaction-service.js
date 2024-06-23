@@ -18,6 +18,24 @@ const getTransaction = async () => {
   return transaction;
 };
 
+const sumPaidTransactions = async () => {
+  // Menghitung total nilai totalprice dari transaksi dengan status "PAID"
+  const {
+    _sum: { totalprice: totalPrice },
+  } = await prismaClient.transaction.aggregate({
+    _sum: {
+      totalprice: true, // Field yang akan dijumlahkan
+    },
+    where: {
+      transactionstatus: "PAID", // Kondisi untuk memilih transaksi
+    },
+  });
+
+  // Mengembalikan nilai total totalprice
+  return totalPrice ?? 0; // Jika totalPrice undefined, kembalikan 0
+};
+
+
 
 const getTransactionById = async ({transactionId}) => {
   const transaction = await prismaClient.transaction.findUnique({
@@ -63,4 +81,9 @@ const updateTransactionStatus = async ({transactionId, transaction_status, payme
 };
 
 
-export default { getTransaction, getTransactionById, updateTransactionStatus };
+export default {
+  getTransaction,
+  sumPaidTransactions,
+  getTransactionById,
+  updateTransactionStatus,
+};
