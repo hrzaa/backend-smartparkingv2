@@ -15,7 +15,6 @@ const parkingIn = async (req, res, next) => {
 const parkingOut = async (req, res, next) => {
   try {
     const parking = req.body;
-    // const transaction = req.params;
     const result = await parkingService.parkingOut(parking);
     res.status(200).json({
       data: result,

@@ -39,7 +39,6 @@ export const createTestPrice = async () => {
   });
 };
 
-
 export const removeTestPrice = async () => {
   await prismaClient.price.deleteMany({
     where: {
@@ -117,4 +116,3 @@ export const getTestParkings = async () => {
 
   return parking;
 };
-

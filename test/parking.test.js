@@ -15,8 +15,8 @@ describe("POST /api/parkings/in", function () {
         });
 
         expect(result.status).toBe(200);
-        expect(result.body.data.code).toBe("test");
-        expect(result.body.data.status).toBe("start");
+        expect(result.body.data.createParkingIn.code).toBe("TEST");
+        expect(result.body.data.createParkingIn.status).toBe("start");
     });
 
 });
@@ -38,7 +38,7 @@ describe("POST /api/parkings/out", function () {
 
       expect(response.status).toBe(200);
       expect(response.body.data).toBeDefined();
-      expect(response.body.data.updatedParking.code).toBe("test");
+      expect(response.body.data.updatedParking.code).toBe("TEST");
       expect(response.body.data.updatedParking.status).toBe("end");
     });
 
@@ -57,7 +57,6 @@ describe("POST /api/parkings/out", function () {
 
 
 });
-
 
 describe("GET /api/parkings", function (){
 

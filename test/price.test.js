@@ -27,6 +27,31 @@ describe("POST /api/price/create", function () {
   });
 });
 
+describe("PATCH /api/price/update", function () {
+  afterEach(async () => {
+    await removeTestUser();
+    await removeTestPrice();
+  });
+
+   it("should update the price", async () => {
+     const user = await createTestUser();
+     const price = await createTestPrice();
+
+     const result = await supertest(web)
+       .patch(`/api/price/update/${price.priceId}`) // Use priceId from test price
+       .query({ apiKey: user.token })
+       .send({
+         price: 1000, // New price value
+       });
+
+     console.log("Update result:", result.body);
+
+     expect(result.status).toBe(200);
+     expect(result.body.data.price).toBe(1000); // Ensure this matches your API response structure
+   });
+});
+
+
 
 describe("GET /api/prices", function () {
     

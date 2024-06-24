@@ -35,8 +35,6 @@ const sumPaidTransactions = async () => {
   return totalPrice ?? 0; // Jika totalPrice undefined, kembalikan 0
 };
 
-
-
 const getTransactionById = async ({transactionId}) => {
   const transaction = await prismaClient.transaction.findUnique({
     where: {
@@ -66,7 +64,7 @@ const updateTransactionStatus = async ({transactionId, transaction_status, payme
      data: {
        transactionstatus: transaction_status,
        payment_method: payment_method,
-       updated_at: new Date(), // Optional but good practice
+       updated_at: new Date(), 
      },
    });
 
