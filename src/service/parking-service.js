@@ -192,7 +192,7 @@ const getAllParking = async (request) => {
       transactions: true,
     },
     orderBy: {
-      parkingin: "asc",
+      parkingin: "desc",
     },
   });
 
