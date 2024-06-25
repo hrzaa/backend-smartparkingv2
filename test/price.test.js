@@ -38,7 +38,7 @@ describe("PATCH /api/price/update", function () {
      const price = await createTestPrice();
 
      const result = await supertest(web)
-       .patch(`/api/price/update/${price.priceId}`) // Use priceId from test price
+       .patch(`/api/price/update/${price.priceId}`) 
        .query({ apiKey: user.token })
        .send({
          price: 1000, // New price value
@@ -47,7 +47,7 @@ describe("PATCH /api/price/update", function () {
      console.log("Update result:", result.body);
 
      expect(result.status).toBe(200);
-     expect(result.body.data.price).toBe(1000); // Ensure this matches your API response structure
+     expect(result.body.data.price).toBe(1000); 
    });
 });
 

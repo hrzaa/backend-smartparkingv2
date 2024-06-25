@@ -36,6 +36,8 @@ describe("POST /api/parkings/out", function () {
         .post("/api/parkings/out")
         .send({ code: "test" });
 
+        console.log(response.body);
+
       expect(response.status).toBe(200);
       expect(response.body.data).toBeDefined();
       expect(response.body.data.updatedParking.code).toBe("TEST");

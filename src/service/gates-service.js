@@ -1,6 +1,6 @@
 import { prismaClient } from "../application/database.js";
 import { validate } from "../validation/validation.js";
-import { gateValidation } from "../validation/gate-validation.js";
+import { gateValidation, gateUpdateValidation } from "../validation/gate-validation.js";
 import { ResponseError } from "../error/response-error.js";
 import { request } from "express";
 
@@ -111,7 +111,7 @@ const createGate = async (request) => {
 };
 
 const updateGate = async (request) => {
-  const gate = validate(gateValidation, request);
+  const gate = validate(gateUpdateValidation, request);
 
   const existingGate = await prismaClient.gates.findUnique({
     where: {
