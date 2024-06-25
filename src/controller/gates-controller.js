@@ -72,11 +72,13 @@ const createGate = async (req, res, next) => {
 
 const updateGate = async (req, res, next) => {
   try {
+    // Pisahkan gatesId dan gateStatus dari parameter dan body
     const request = {
       gatesId: req.params.gatesId,
       gateStatus: req.body.gateStatus,
     };
 
+    // Panggil service layer dengan request yang sesuai
     const result = await gatesService.updateGate(request);
     res.status(200).json({
       data: result,

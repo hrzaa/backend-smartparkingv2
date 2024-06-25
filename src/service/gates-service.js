@@ -111,11 +111,13 @@ const createGate = async (request) => {
 };
 
 const updateGate = async (request) => {
-  const gate = validate(gateUpdateValidation, request);
+  const { gatesId, gateStatus } = request;
+
+  validate(gateUpdateValidation, { gateStatus });
 
   const existingGate = await prismaClient.gates.findUnique({
     where: {
-      gatesId: gate.gatesId,
+      gatesId,
     },
   });
 
@@ -125,10 +127,10 @@ const updateGate = async (request) => {
 
   return prismaClient.gates.update({
     where: {
-      gatesId: gate.gatesId,
+      gatesId,
     },
     data: {
-      gateStatus: gate.gateStatus,
+      gateStatus,
     },
     select: {
       gatesId: true,
