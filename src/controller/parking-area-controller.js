@@ -5,7 +5,11 @@ const prisma = new PrismaClient();
 const getAllParkingAreas = async (req, res) => {
   const parkingAreas = await prisma.parkingArea.findMany({
     orderBy: { parking_name: "asc" },
-    include: { parkingSpaces: true },
+    include: {
+      parkingSpaces: {
+        orderBy: { space_name: "asc" },
+      },
+    },
   });
 
   res.json(parkingAreas);
