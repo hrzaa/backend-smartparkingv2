@@ -186,7 +186,10 @@ const parkingOut = async (reqParking) => {
   return { updatedParking, savedTransaction, paymentResponse: transaction };
 };
 
-const getAllParking = async (request) => {
+const getAllParking = async ({ page, limit }) => {
+  const parsedPage = parseInt(page);
+  const parsedLimit = parseInt(limit);
+
   const parkings = await prismaClient.parking.findMany({
     include: {
       transactions: true,
@@ -194,13 +197,24 @@ const getAllParking = async (request) => {
     orderBy: {
       parkingin: "desc",
     },
+    skip: (parsedPage - 1) * parsedLimit,
+    take: parsedLimit,
   });
 
-  if (!parkings) {
-    throw new ResponseError(404, `Parking Code not found`);
+  const totalParkings = await prismaClient.parking.count();
+
+  if (!parkings || parkings.length === 0) {
+    throw new ResponseError(404, `Parking data not found`);
   }
 
-  return parkings;
+  return {
+    data: parkings,
+    meta: {
+      total: totalParkings,
+      page: parsedPage,
+      limit: parsedLimit,
+    },
+  };
 };
 
 const getAllParkingById = async (id) => {

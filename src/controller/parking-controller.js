@@ -26,9 +26,20 @@ const parkingOut = async (req, res, next) => {
 
 const getAllParking = async (req, res, next) => {
   try {
-    const result = await parkingService.getAllParking();
+    const { page = 1, limit = 5, apiKey } = req.query;
+
+    if (!apiKey) {
+      throw new ResponseError(401, "API Key is required");
+    }
+
+    const parsedPage = parseInt(page);
+    const parsedLimit = parseInt(limit);
+
+    const result = await parkingService.getAllParking({ page:parsedPage, limit:parsedLimit });
+
     res.status(200).json({
-      data: result,
+      data: result.data,
+      meta: result.meta,
     });
   } catch (e) {
     next(e);
