@@ -248,6 +248,14 @@ const removeParking = async (parkingId) => {
     throw new ResponseError(404, `Parking Code not found`);
   }
 
+  // Hapus transaksi terkait jika ada
+  await prismaClient.transaction.deleteMany({
+    where: {
+      parkingId: validatedId.parkingId,
+    },
+  });
+
+  // Hapus parkir
   return prismaClient.parking.delete({
     where: {
       parkingId: validatedId.parkingId,
