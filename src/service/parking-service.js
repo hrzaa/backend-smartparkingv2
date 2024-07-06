@@ -186,11 +186,27 @@ const parkingOut = async (reqParking) => {
   return { updatedParking, savedTransaction, paymentResponse: transaction };
 };
 
-const getAllParking = async ({ page, limit }) => {
+const getAllParking = async ({ page, limit, search = "" }) => {
   const parsedPage = parseInt(page);
   const parsedLimit = parseInt(limit);
 
+  const lowerCaseSearch = search.toLowerCase();
+
+  const totalParkings = await prismaClient.parking.count({
+    where: {
+      code: {
+        contains: lowerCaseSearch,
+      },
+    },
+  });
+
+  // Ambil data parkir dengan kondisi pencarian dan pagination
   const parkings = await prismaClient.parking.findMany({
+    where: {
+      code: {
+        contains: lowerCaseSearch,
+      },
+    },
     include: {
       transactions: true,
     },
@@ -200,8 +216,6 @@ const getAllParking = async ({ page, limit }) => {
     skip: (parsedPage - 1) * parsedLimit,
     take: parsedLimit,
   });
-
-  const totalParkings = await prismaClient.parking.count();
 
   if (!parkings || parkings.length === 0) {
     throw new ResponseError(404, `Parking data not found`);
@@ -216,6 +230,7 @@ const getAllParking = async ({ page, limit }) => {
     },
   };
 };
+
 
 const getAllParkingById = async (id) => {
   // const { id } = request.params;

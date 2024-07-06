@@ -25,18 +25,12 @@ const parkingOut = async (req, res, next) => {
 };
 
 const getAllParking = async (req, res, next) => {
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
+  const search = req.query.search_query || "";
+
   try {
-    const { page = 1, limit = 5, apiKey } = req.query;
-
-    if (!apiKey) {
-      throw new ResponseError(401, "API Key is required");
-    }
-
-    const parsedPage = parseInt(page);
-    const parsedLimit = parseInt(limit);
-
-    const result = await parkingService.getAllParking({ page:parsedPage, limit:parsedLimit });
-
+    const result = await parkingService.getAllParking({ page, limit, search });
     res.status(200).json({
       data: result.data,
       meta: result.meta,
@@ -59,7 +53,7 @@ const getAllParkingById = async (req, res, next) => {
 
 const removeParking = async (req, res, next) => {
   try {
-    const { parkingId } = req.params; // Asumsikan bahwa parkingId ada di req.params
+    const { parkingId } = req.params;
     await parkingService.removeParking(parkingId);
     res.status(200).json({
       data: "OK",
