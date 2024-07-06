@@ -56,23 +56,26 @@ model Price {
 }
 
 model ParkingArea {
-  id            String         @id @default(uuid())
-  parking_name  String         @unique
-  parkingSpaces ParkingSpace[] // Relasi one-to-many dari MainArea ke Area
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id             String         @id @default(uuid())
+  name           String         @unique
+  img            String         @unique
+  img_url        String         @unique
+  location       String
+  parking_spaces ParkingSpace[] // Relasi one-to-many dari MainArea ke Area
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   @@map("parking_areas")
 }
 
 model ParkingSpace {
-  id            String       @id @default(uuid())
-  parkingArea   ParkingArea? @relation(fields: [parkingAreaId], references: [id], onDelete: Cascade) // Relasi many-to-one dari Area ke MainArea
-  parkingAreaId String
-  space_name    String       @unique
-  status        Boolean      @default(false)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id              String       @id @default(uuid())
+  parking_area    ParkingArea? @relation(fields: [parking_area_id], references: [id], onDelete: Cascade) // Relasi many-to-one dari Area ke MainArea
+  parking_area_id String
+  space_name      String       @unique
+  status          Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
   @@map("parking_spaces")
 }
