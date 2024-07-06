@@ -3,17 +3,27 @@ import formidable from "formidable";
 import fs from "fs";
 import path from "path";
 import { mkdirSync } from "fs";
-
 const prisma = new PrismaClient();
 
-const folderPath = path.resolve("src", "public", "img", "parkings");
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-try {
-  mkdirSync(folderPath, { recursive: true });
-  console.log(`Directory created successfully at ${folderPath}`);
-} catch (err) {
-  console.error(`Error creating directory: ${err.message}`);
-}
+const makeFolderImages = (folderPath) => {
+  try {
+    mkdirSync(path.join(__dirname, "../public/img/parkings"), {
+      recursive: true,
+    });
+    // console.log(
+    //   `Directory created successfully at ${path.join(
+    //     __dirname,
+    //     "../public/img/parkings"
+    //   )}`
+    // );
+  } catch (err) {
+    console.error(`Error creating directory: ${err.message}`);
+  }
+};
 
 const deleteAllImages = (folderPath) => {
   try {
@@ -55,7 +65,6 @@ const updateParkingAreas = async (req, res) => {
   const parkings = req.body;
 
   await prisma.parkingArea.deleteMany();
-  deleteAllImages(folderPath);
 
   for (const data of parkings) {
     await prisma.parkingArea.create({
@@ -97,9 +106,11 @@ const updateParkingSpaces = async (req, res) => {
 };
 
 const updateParkingImages = async (req, res) => {
+  makeFolderImages(path.join(__dirname, "../public/img/parkings"));
+
   const form = formidable({
     multiples: false,
-    uploadDir: folderPath,
+    uploadDir: path.join(__dirname, "../public/img/parkings"),
     keepExtensions: true,
     filename: (name, ext, part, form) => {
       return part.originalFilename;
@@ -117,7 +128,7 @@ const updateParkingImages = async (req, res) => {
         where: { id: req.params.id },
         data: {
           img: image.originalFilename,
-          img_url: `${req.protocol}://${req.get("host")}/img/parkings/${
+          img_url: `https://${req.get("host")}/img/parkings/${
             image.originalFilename
           }`,
         },
@@ -132,7 +143,7 @@ const updateParkingImages = async (req, res) => {
 const deleteAllParkingAreas = async (req, res) => {
   try {
     await prisma.parkingArea.deleteMany();
-    deleteAllImages(folderPath);
+    deleteAllImages(path.join(__dirname, "../public/img/parkings"));
     res.status(200).json([]);
   } catch (error) {
     res.status(500).json(error);
