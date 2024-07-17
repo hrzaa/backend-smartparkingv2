@@ -186,17 +186,32 @@ const parkingOut = async (reqParking) => {
   return { updatedParking, savedTransaction, paymentResponse: transaction };
 };
 
-const getAllParking = async ({ page, limit, search = "" }) => {
+const getAllParking = async ({
+  page,
+  limit,
+  search = "",
+  startDate,
+  endDate,
+}) => {
   const parsedPage = parseInt(page);
   const parsedLimit = parseInt(limit);
 
   const lowerCaseSearch = search.toLowerCase();
+
+  // Create a date range filter
+  const dateRangeFilter = {
+    gte: startDate ? new Date(startDate) : undefined,
+    lte: endDate
+      ? new Date(new Date(endDate).setHours(23, 59, 59, 999))
+      : undefined,
+  };
 
   const totalParkings = await prismaClient.parking.count({
     where: {
       code: {
         contains: lowerCaseSearch,
       },
+      parkingin: dateRangeFilter,
     },
   });
 
@@ -206,6 +221,7 @@ const getAllParking = async ({ page, limit, search = "" }) => {
       code: {
         contains: lowerCaseSearch,
       },
+      parkingin: dateRangeFilter,
     },
     include: {
       transactions: true,

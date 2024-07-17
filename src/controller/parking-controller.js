@@ -28,16 +28,24 @@ const getAllParking = async (req, res, next) => {
   const page = req.query.page || 1;
   const limit = req.query.limit || 10;
   const search = req.query.search_query || "";
+  const startDate = req.query.start_date; // Extract start date from query
+  const endDate = req.query.end_date; // Extract end date from query
 
-  try {
-    const result = await parkingService.getAllParking({ page, limit, search });
-    res.status(200).json({
-      data: result.data,
-      meta: result.meta,
-    });
-  } catch (e) {
-    next(e);
-  }
+ try {
+   const result = await parkingService.getAllParking({
+     page,
+     limit,
+     search,
+     startDate,
+     endDate,
+   });
+   res.status(200).json({
+     data: result.data,
+     meta: result.meta,
+   });
+ } catch (e) {
+   next(e);
+ }
 };
 
 const getAllParkingById = async (req, res, next) => {
