@@ -8,8 +8,8 @@ import {
 import { ResponseError } from "../error/response-error.js";
 import { request } from "express";
 
-const create = async (request) => {
-  const price = validate(createPriceValidation, request);
+const create = async (request, userId) => {
+  const { price } = validate(createPriceValidation, request);
   const existingPrice = await prismaClient.price.findFirst();
 
   if (existingPrice) {
@@ -17,15 +17,19 @@ const create = async (request) => {
   }
  
   return prismaClient.price.create({
-    data: price,
+    data: {
+      price, 
+      userId
+    },
     select: {
       priceId: true,
+      userId:true,
       price: true,
     },
   });
 };
 
-const update = async (id, data) => {
+const update = async (id, data, userId) => {
   const priceId = id.priceId;
   const newPrice = data.price;
 
@@ -36,6 +40,7 @@ const update = async (id, data) => {
     select: {
       priceId: true,
       price: true,
+      userId: true,
     },
   });
 
@@ -49,10 +54,12 @@ const update = async (id, data) => {
     },
     data: {
       price: newPrice,
+      userId: userId,
     },
     select: {
       priceId: true,
       price: true,
+      userId: true
     },
   });
 };

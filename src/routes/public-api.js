@@ -35,12 +35,9 @@ publicRouter.post("/api/parkings/in", parking_middleware, parkingController.park
 publicRouter.post("/api/parkings/out", parkingController.parkingOut);
 
 // GATES
-publicRouter.get("/api/gates", gatesController.getStatusGate);
 publicRouter.get("/api/opengates", parking_middleware, gatesController.getStatusOpenGate);
 publicRouter.get("/api/closegates", gatesController.getStatusCloseGate);
 publicRouter.post("/api/gates/in", gatesController.gateIn);
-publicRouter.post("/api/gates/createGate", gatesController.createGate);
-publicRouter.patch("/api/gates/update/:gatesId", gatesController.updateGate);
 
 // =========== ALDINI =============
 publicRouter.get(

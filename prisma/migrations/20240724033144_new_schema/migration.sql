@@ -1,12 +1,12 @@
 -- CreateTable
 CREATE TABLE `users` (
+    `userId` VARCHAR(191) NOT NULL,
     `username` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `token` VARCHAR(255) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `role` VARCHAR(191) NOT NULL DEFAULT 'ADMIN',
     `updatedAt` DATETIME(3) NOT NULL,
-    `userId` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `users_username_key`(`username`),
     PRIMARY KEY (`userId`)
@@ -14,12 +14,12 @@ CREATE TABLE `users` (
 
 -- CreateTable
 CREATE TABLE `parkings` (
+    `parkingId` VARCHAR(191) NOT NULL,
     `code` VARCHAR(12) NOT NULL,
     `status` VARCHAR(10) NOT NULL,
     `parkingin` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `parkingout` DATETIME(3) NULL,
     `totaltime` INTEGER NULL,
-    `parkingId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`parkingId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -43,11 +43,25 @@ CREATE TABLE `transactions` (
 -- CreateTable
 CREATE TABLE `prices` (
     `priceId` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
     `price` DOUBLE NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    UNIQUE INDEX `prices_userId_key`(`userId`),
     PRIMARY KEY (`priceId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `gates` (
+    `gatesId` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `gatesName` VARCHAR(191) NOT NULL,
+    `gateStatus` BOOLEAN NOT NULL DEFAULT false,
+
+    UNIQUE INDEX `gates_userId_key`(`userId`),
+    UNIQUE INDEX `gates_gatesName_key`(`gatesName`),
+    PRIMARY KEY (`gatesId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -79,18 +93,11 @@ CREATE TABLE `parking_spaces` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- CreateTable
-CREATE TABLE `gates` (
-    `gatesId` VARCHAR(191) NOT NULL,
-    `gatesName` VARCHAR(191) NOT NULL,
-    `gateStatus` BOOLEAN NOT NULL DEFAULT false,
-
-    UNIQUE INDEX `gates_gatesName_key`(`gatesName`),
-    PRIMARY KEY (`gatesId`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
 -- AddForeignKey
 ALTER TABLE `transactions` ADD CONSTRAINT `transactions_parkingId_fkey` FOREIGN KEY (`parkingId`) REFERENCES `parkings`(`parkingId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `prices` ADD CONSTRAINT `prices_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `parking_spaces` ADD CONSTRAINT `parking_spaces_parking_area_id_fkey` FOREIGN KEY (`parking_area_id`) REFERENCES `parking_areas`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

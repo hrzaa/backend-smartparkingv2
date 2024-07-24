@@ -8,84 +8,88 @@ datasource db {
 }
 
 model User {
-  username  String   @unique @db.VarChar(255)
-  password  String   @db.VarChar(255)
-  token     String?  @db.VarChar(255)
-  createdAt DateTime @default(now())
-  role      String   @default("ADMIN")
-  updatedAt DateTime @updatedAt
-  userId    String   @id @default(uuid())
+  userId            String        @id @default(uuid())
+  username          String        @unique @db.VarChar(255)
+  password          String        @db.VarChar(255)
+  token             String?       @db.VarChar(255)
+  createdAt         DateTime      @default(now())
+  role              String        @default("ADMIN")
+  updatedAt         DateTime      @updatedAt
+  prices            Price?
 
   @@map("users")
 }
 
 model Parking {
-  code         String       @db.VarChar(12)
-  status       String       @db.VarChar(10)
-  parkingin    DateTime     @default(now())
-  parkingout   DateTime?
-  totaltime    Int?
-  parkingId    String       @id @default(uuid())
-  transactions Transaction?
+  parkingId         String        @id @default(uuid())
+  code              String        @db.VarChar(12)
+  status            String        @db.VarChar(10)
+  parkingin         DateTime      @default(now())
+  parkingout        DateTime?
+  totaltime         Int?
+  transactions      Transaction?
 
   @@map("parkings")
 }
 
 model Transaction {
-  transactionId     String  @id @db.VarChar(100)
-  parkingId         String  @unique
+  transactionId     String        @id @db.VarChar(100)
+  parkingId         String        @unique
   totalprice        Float
   transactionstatus transactions_status
-  snap_token         String?             @db.VarChar(255)
-  snap_redirect_url  String?             @db.VarChar(255)
-  payment_method     String?             @db.VarChar(110)
-  created_at         DateTime?           @default(now()) @db.Timestamp(0)
-  updated_at         DateTime?           @default(now()) @db.Timestamp(0)
-  idParking         Parking @relation(fields: [parkingId], references: [parkingId], onDelete: Cascade)
+  snap_token        String?       @db.VarChar(255)
+  snap_redirect_url String?       @db.VarChar(255)
+  payment_method    String?       @db.VarChar(110)
+  created_at        DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at        DateTime?     @default(now()) @db.Timestamp(0)
+  idParking         Parking       @relation(fields: [parkingId], references: [parkingId], onDelete: Cascade)
 
   @@map("transactions")
 }
 
 model Price {
-  priceId   String   @id @default(uuid())
-  price     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  priceId           String        @id @default(uuid())
+  userId            String        @unique
+  price             Float
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  idUser            User          @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@map("prices")
 }
 
+model Gates {
+  gatesId           String        @id @default(uuid())
+  gatesName         String        @unique
+  gateStatus        Boolean       @default(false)
+
+  @@map("gates")
+}
+
 model ParkingArea {
-  id             String         @id @default(uuid())
-  name           String         @unique
-  img            String         @unique
-  img_url        String         @unique
-  location       String
-  parking_spaces ParkingSpace[] // Relasi one-to-many dari MainArea ke Area
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id                String         @id @default(uuid())
+  name              String         @unique
+  img               String         @unique
+  img_url           String         @unique
+  location          String
+  parking_spaces    ParkingSpace[] // Relasi one-to-many dari MainArea ke Area
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
   @@map("parking_areas")
 }
 
 model ParkingSpace {
-  id              String       @id @default(uuid())
-  parking_area    ParkingArea? @relation(fields: [parking_area_id], references: [id], onDelete: Cascade) // Relasi many-to-one dari Area ke MainArea
-  parking_area_id String
-  space_name      String       @unique
-  status          Boolean      @default(false)
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  id                String        @id @default(uuid())
+  parking_area      ParkingArea?  @relation(fields: [parking_area_id], references: [id], onDelete: Cascade) // Relasi many-to-one dari Area ke MainArea
+  parking_area_id   String
+  space_name        String        @unique
+  status            Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   @@map("parking_spaces")
-}
-
-model Gates {
-  gatesId    String  @id @default(uuid())
-  gatesName  String  @unique
-  gateStatus Boolean @default(false)
-
-  @@map("gates")
 }
 
 enum transactions_status {

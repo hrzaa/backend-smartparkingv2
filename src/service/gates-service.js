@@ -134,6 +134,7 @@ const updateGate = async (request) => {
     },
     select: {
       gatesId: true,
+      gatesName:true,
       gateStatus: true,
     },
   });
