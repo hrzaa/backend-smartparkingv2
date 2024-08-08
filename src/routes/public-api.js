@@ -14,10 +14,6 @@ const publicRouter = new express.Router();
 publicRouter.post("/api/users/register", userController.register);
 publicRouter.post("/api/users/login", userController.login);
 
-// TRANSACTION
-publicRouter.get("/api/transactions", transactionController.getTransaction);
-publicRouter.get("/api/transactions/:transactionId", transactionController.getTransactionById);
-publicRouter.patch("/api/transactions/:transactionId", transactionController.updateTransactionStatus);
 // HANDLE NOTIFICATION FROM MIDTRANS
 publicRouter.post("/api/transactions/notification", transactionController.trxNotif);
 
