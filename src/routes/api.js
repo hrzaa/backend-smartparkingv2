@@ -10,30 +10,28 @@ const apiRouter = new express.Router();
     apiRouter.use(authMiddleware);
 
     // USER ROUTER
-    apiRouter.get("/api/user/get/:userId", userController.get);
-    apiRouter.get("/api/users/", userController.all);
-    apiRouter.patch("/api/user/update/:userId", userController.update);
-    apiRouter.delete("/api/user/logout/:userId", userController.logout);
+    apiRouter.get("/api/users", userController.all);
+    apiRouter.get("/api/users/:userId", userController.get);
+    apiRouter.patch("/api/users/:userId", userController.update);
+    apiRouter.delete("/api/users/:userId", userController.logout);
     
     // PARKINGS
-    apiRouter.delete("/api/parkings/remove/:parkingId", parkingController.removeParking);
     apiRouter.get("/api/parkings", parkingController.getAllParking);
     apiRouter.get("/api/parkings/:parkingId", parkingController.getAllParkingById);
+    apiRouter.delete("/api/parkings/:parkingId", parkingController.removeParking);
 
     // PRICE 
-    apiRouter.post("/api/price/create", priceController.create);
-    apiRouter.patch("/api/price/update/:priceId", priceController.update);
     apiRouter.get("/api/prices", priceController.getAllPrice);
+    apiRouter.post("/api/prices", priceController.create);
+    apiRouter.patch("/api/prices/:priceId", priceController.update);
 
     // GATES
     apiRouter.get("/api/gates", gatesController.getStatusGate);
     apiRouter.post("/api/gates/createGate", gatesController.createGate);
     apiRouter.patch("/api/gates/update/:gatesId", gatesController.updateGate);
-
     
     // TRANSACTIONS
     apiRouter.get("/api/transactions/count", transactionController.sumPaidTransactions);
-
 
 export {
     apiRouter

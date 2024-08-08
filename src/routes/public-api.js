@@ -11,32 +11,23 @@ import { parking_middleware } from "../middleware/parking-middleware.js";
 const publicRouter = new express.Router();
 
 // LOGIN RESGISTER
-publicRouter.post("/api/users", userController.register);
-publicRouter.post("/api/user/login", userController.login);
+publicRouter.post("/api/users/register", userController.register);
+publicRouter.post("/api/users/login", userController.login);
 
 // TRANSACTION
 publicRouter.get("/api/transactions", transactionController.getTransaction);
-publicRouter.get(
-  "/api/transaction/:transactionId",
-  transactionController.getTransactionById
-);
-publicRouter.patch(
-  "/api/transaction/:transactionId",
-  transactionController.updateTransactionStatus
-);
+publicRouter.get("/api/transactions/:transactionId", transactionController.getTransactionById);
+publicRouter.patch("/api/transactions/:transactionId", transactionController.updateTransactionStatus);
 // HANDLE NOTIFICATION FROM MIDTRANS
-publicRouter.post(
-  "/api/transaction/notification",
-  transactionController.trxNotif
-);
+publicRouter.post("/api/transactions/notification", transactionController.trxNotif);
 
 // PARKING
 publicRouter.post("/api/parkings/in", parking_middleware, parkingController.parkingIn);
 publicRouter.post("/api/parkings/out", parkingController.parkingOut);
 
 // GATES
-publicRouter.get("/api/opengates", parking_middleware, gatesController.getStatusOpenGate);
-publicRouter.get("/api/closegates", gatesController.getStatusCloseGate);
+publicRouter.get("/api/gates/open", parking_middleware, gatesController.getStatusOpenGate);
+publicRouter.get("/api/gates/close", gatesController.getStatusCloseGate);
 publicRouter.post("/api/gates/in", gatesController.gateIn);
 
 // =========== ALDINI =============
