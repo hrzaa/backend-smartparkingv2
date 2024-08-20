@@ -32,9 +32,7 @@ const apiRouter = new express.Router();
     
     // TRANSACTIONS
     apiRouter.get("/api/transactions/count", transactionController.sumPaidTransactions);
-    apiRouter.get("/api/transactions", transactionController.getTransaction);
-    apiRouter.get("/api/transactions/:transactionId", transactionController.getTransactionById);
-    apiRouter.patch("/api/transactions/:transactionId", transactionController.updateTransactionStatus);
+
 
 export {
     apiRouter
