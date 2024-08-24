@@ -13,16 +13,6 @@ const getTransaction = async (req, res, next) => {
     next(e);
   }
 };
-const sumPaidTransactions = async (req, res, next) => {
-  try {
-    const result = await transactionService.sumPaidTransactions();
-    res.status(200).json({
-      data: result,
-    });
-  } catch (e) {
-    next(e);
-  }
-};
 
 const getTransactionById = async (req, res, next) => {
   const { transactionId } = req.params;
@@ -132,11 +122,22 @@ export const trxNotif = async(req, res, next) => {
     })
 }
 
+const sumTransactions = async (req, res, next) => {
+  try {
+    const result = await transactionService.sumTransactions();
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 
 export default {
   getTransaction,
-  sumPaidTransactions,
   getTransactionById,
   updateTransactionStatus,
   trxNotif,
+  sumTransactions,
 };

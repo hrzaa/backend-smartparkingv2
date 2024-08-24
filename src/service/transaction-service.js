@@ -12,27 +12,10 @@ const getTransaction = async () => {
   });
 
   if (!transaction) {
-    throw new ResponseError(404, `Transactions Code not found`);
+    throw new ResponseError(404, `Transactions not found`);
   }
 
   return transaction;
-};
-
-const sumPaidTransactions = async () => {
-  // Menghitung total nilai totalprice dari transaksi dengan status "PAID"
-  const {
-    _sum: { totalprice: totalPrice },
-  } = await prismaClient.transaction.aggregate({
-    _sum: {
-      totalprice: true, // Field yang akan dijumlahkan
-    },
-    where: {
-      transactionstatus: "PAID", // Kondisi untuk memilih transaksi
-    },
-  });
-
-  // Mengembalikan nilai total totalprice
-  return totalPrice ?? 0; // Jika totalPrice undefined, kembalikan 0
 };
 
 const getTransactionById = async ({transactionId}) => {
@@ -78,10 +61,33 @@ const updateTransactionStatus = async ({transactionId, transaction_status, payme
     return transaction;
 };
 
+const sumTransactions = async () => {
+  try {
+    // Menghitung total nilai totalprice dari transaksi dengan status "PAID"
+    const {
+      _sum: { totalprice: totalPrice },
+    } = await prismaClient.transaction.aggregate({
+      _sum: {
+        totalprice: true, // Field yang akan dijumlahkan
+      },
+      where: {
+        transactionstatus: "PAID", // Kondisi untuk memilih transaksi dengan status "PAID"
+      },
+    });
+
+    // Mengembalikan nilai total totalprice atau 0 jika undefined/null
+    return totalPrice || 0;
+  } catch (error) {
+    console.error("Error calculating sum of paid transactions:", error);
+    throw new Error("Unable to calculate total price of paid transactions");
+  }
+};
+
+
 
 export default {
   getTransaction,
-  sumPaidTransactions,
   getTransactionById,
   updateTransactionStatus,
+  sumTransactions,
 };

@@ -27,15 +27,7 @@ publicRouter.get("/api/gates/close", gatesController.getStatusCloseGate);
 publicRouter.post("/api/gates/in", gatesController.gateIn);
 
 // TRANSACTIONS
-    publicRouter.get("/api/transactions", transactionController.getTransaction);
-    publicRouter.get(
-      "/api/transactions/:transactionId",
-      transactionController.getTransactionById
-    );
-    publicRouter.patch(
-      "/api/transactions/:transactionId",
-      transactionController.updateTransactionStatus
-    );
+
 
 // =========== ALDINI =============
 publicRouter.get(
